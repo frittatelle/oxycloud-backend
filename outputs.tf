@@ -29,3 +29,11 @@ output "SIGNIN_REDIRECT_URL" {
 output "SIGNOUT_REDIRECT_URL" {
   value = var.signout_redirect_url
 }
+
+output "WEBSITE_URL" {
+  value = aws_cloudfront_distribution.website.domain_name
+}
+
+output "HOSTING_BUCKET" {
+  value = aws_s3_bucket.hosting.id
+}
