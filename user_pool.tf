@@ -69,7 +69,9 @@ resource "aws_cognito_user_pool_domain" "main" {
   domain       = var.user_pool_domain
   user_pool_id = aws_cognito_user_pool.users_pool.id
 }
-
+locals {
+  callback_url = "https://${aws_cloudfront_distribution.website.domain_name}/"
+}
 # aws_cognito_user_pool_client.web_client:
 resource "aws_cognito_user_pool_client" "web_client" {
   allowed_oauth_flows = [
@@ -82,17 +84,14 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "openid",
     "phone",
   ]
-  callback_urls = [
-    var.signin_redirect_url
-  ]
+  callback_urls = [local.callback_url]
+
   explicit_auth_flows = [
     "ALLOW_CUSTOM_AUTH",
     "ALLOW_REFRESH_TOKEN_AUTH",
     "ALLOW_USER_SRP_AUTH",
   ]
-  logout_urls = [
-    var.signout_redirect_url, #the url of the deployed app
-  ]
+  logout_urls                   = [local.callback_url]
   name                          = "web_client"
   prevent_user_existence_errors = "ENABLED"
   read_attributes = [
