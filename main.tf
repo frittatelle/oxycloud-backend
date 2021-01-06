@@ -10,6 +10,7 @@ terraform {
 module "website" {
   source = "./website"
 
+  s3_origin_id  = "s3OriginId" #not clear
   bucket_prefix = "oxy-website-"
 }
 
@@ -22,9 +23,9 @@ locals {
 module "authorization" {
   source = "./authorization"
 
-  region            = var.region
-  website           = local.website
-  user_pool_domain  = local.user_pool_domain
+  region           = var.region
+  website          = local.website
+  user_pool_domain = local.user_pool_domain
 }
 
 provider "aws" {
@@ -37,6 +38,6 @@ resource "aws_iam_role_policy_attachment" "authenticated" {
 }
 
 resource "random_string" "id" {
-  length = 6
+  length  = 6
   special = false
 }
