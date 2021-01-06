@@ -18,3 +18,12 @@ jobs:
         uses: dflook/terraform-validate@v1
         with:
           path: .
+  
+  automerge:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: automerge
+        uses: "pascalgn/automerge-action@v0.13.0"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
