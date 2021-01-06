@@ -31,9 +31,9 @@ output "SIGNOUT_REDIRECT_URL" {
 }
 
 output "WEBSITE_URL" {
-  value = local.callback_url
+  value = module.website.domain_name
 }
 
 output "HOSTING_BUCKET" {
-  value = aws_s3_bucket.hosting.id
+  value = module.website.hosting_bucket
 }

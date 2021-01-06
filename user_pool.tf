@@ -70,7 +70,7 @@ resource "aws_cognito_user_pool_domain" "main" {
   user_pool_id = aws_cognito_user_pool.users_pool.id
 }
 locals {
-  callback_url = "https://${aws_cloudfront_distribution.website.domain_name}/"
+  callback_url = "https://${module.website.domain_name}/"
 }
 # aws_cognito_user_pool_client.web_client:
 resource "aws_cognito_user_pool_client" "web_client" {

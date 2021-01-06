@@ -7,6 +7,12 @@ terraform {
   }
 }
 
+module "website" {
+  source = "./website"
+
+  bucket_prefix = "oxy-website-"
+}
+
 provider "aws" {
-  region     = var.region
+  region = var.region
 }
