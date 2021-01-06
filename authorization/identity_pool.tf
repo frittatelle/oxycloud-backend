@@ -19,10 +19,6 @@ resource "aws_cognito_identity_pool_roles_attachment" "identities_pool_roles" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "test-attach" {
-  role       = aws_iam_role.authenticated.name
-  policy_arn = aws_iam_policy.bucket_access.arn
-}
 # aws_iam_role.authenticated:
 resource "aws_iam_role" "authenticated" {
   assume_role_policy = jsonencode(
