@@ -1,17 +1,17 @@
 output "USER_POOL_ID" {
-  value = aws_cognito_user_pool.users_pool.id
+  value = module.authorization.user_pool
 }
 
 output "USER_POOL_SUBDOMAIN" {
-  value = aws_cognito_user_pool_domain.main.domain
+  value = local.user_pool_domain
 }
 
 output "CLIENT_ID" {
-  value = aws_cognito_user_pool_client.web_client.id
+  value = module.authorization.client_id
 }
 
 output "IDENTITY_POOL_ID" {
-  value = aws_cognito_identity_pool.identities_pool.id
+  value = module.authorization.identity_pool
 }
 
 output "BUCKET_NAME" {
@@ -21,19 +21,20 @@ output "BUCKET_NAME" {
 output "REGION" {
   value = var.region
 }
-
+##TODO: remove
+# they still exist for the direct production of the .env file for react
 output "SIGNIN_REDIRECT_URL" {
-  value = local.callback_url
+  value = local.website
 }
 
 output "SIGNOUT_REDIRECT_URL" {
-  value = local.callback_url
+  value = local.website
 }
-
+###
 output "WEBSITE_URL" {
-  value = local.callback_url
+  value = local.website
 }
 
 output "HOSTING_BUCKET" {
-  value = aws_s3_bucket.hosting.id
+  value = module.website.hosting_bucket
 }
