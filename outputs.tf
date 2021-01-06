@@ -23,9 +23,17 @@ output "REGION" {
 }
 
 output "SIGNIN_REDIRECT_URL" {
-  value = var.signin_redirect_url
+  value = local.callback_url
 }
 
 output "SIGNOUT_REDIRECT_URL" {
-  value = var.signout_redirect_url
+  value = local.callback_url
+}
+
+output "WEBSITE_URL" {
+  value = local.callback_url
+}
+
+output "HOSTING_BUCKET" {
+  value = aws_s3_bucket.hosting.id
 }
