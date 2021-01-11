@@ -38,7 +38,6 @@ resource "aws_iam_policy" "bucket_access" {
           Condition = {
             StringLike = {
               "s3:prefix" = ["$${cognito-identity.amazonaws.com:sub}/*"]
-              "s3:prefix" = ["$${cognito-identity.amazonaws.com:sub}/"]
             }
           }
 
