@@ -40,4 +40,5 @@ resource "aws_iam_role_policy_attachment" "authenticated" {
 resource "random_string" "id" {
   length  = 6
   special = false
+  upper = false
 }
