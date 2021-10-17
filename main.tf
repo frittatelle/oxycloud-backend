@@ -28,13 +28,20 @@ module "authorization" {
   user_pool_domain = local.user_pool_domain
 }
 
+module "storage" {
+  source = "./storage"
+
+  region           = var.region
+  user_pool_domain = local.user_pool_domain
+}
+
 provider "aws" {
   region = var.region
 }
 
 resource "aws_iam_role_policy_attachment" "authenticated" {
   role       = module.authorization.authenticated_role_name
-  policy_arn = aws_iam_policy.bucket_access.arn
+  policy_arn = module.storage.user_access_policy.arn
 }
 
 resource "random_string" "id" {

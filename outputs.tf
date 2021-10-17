@@ -15,7 +15,7 @@ output "IDENTITY_POOL_ID" {
 }
 
 output "BUCKET_NAME" {
-  value = aws_s3_bucket.storage.bucket
+  value = module.storage.bucket
 }
 
 output "REGION" {
