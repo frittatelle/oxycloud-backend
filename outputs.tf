@@ -15,7 +15,7 @@ output "IDENTITY_POOL_ID" {
 }
 
 output "BUCKET_NAME" {
-  value = module.storage.bucket
+  value = module.storage.bucket.bucket
 }
 
 output "REGION" {

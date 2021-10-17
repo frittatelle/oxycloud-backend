@@ -1,16 +1,16 @@
 resource "aws_lambda_permission" "allow_bucket_on_created" {
-  count         = var.on_created_lambda == null ? 0 : 1
+  #  count         = var.on_created_lambda_arn == null ? 0 : 1
   statement_id  = "AllowExecutionFromS3BucketOnCreated"
   action        = "lambda:InvokeFunction"
-  function_name = var.on_created_lambda.arn
+  function_name = var.on_created_lambda_arn
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.storage.arn
 }
 resource "aws_lambda_permission" "allow_bucket_on_removed" {
-  count         = var.on_removed_lambda == null ? 0 : 1
+  count = 0#         = var.on_removed_lambda_arn == null ? 0 : 1
   statement_id  = "AllowExecutionFromS3BucketOnRemoved"
   action        = "lambda:InvokeFunction"
-  function_name = var.on_removed_lambda.arn
+  function_name = var.on_removed_lambda_arn
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.storage.arn
 }
@@ -20,11 +20,11 @@ resource "aws_lambda_permission" "allow_bucket_on_removed" {
 #but i cannot put condition for lambda block
 resource "aws_s3_bucket_notification" "triggers" {
   bucket = aws_s3_bucket.storage.id
-  
-  count         = var.on_created_lambda == null ? 0 : 1
-  
+
+  count = 1#var.on_created_lambda_arn == null ? 0 : 1
+
   lambda_function {
-    lambda_function_arn = "${var.on_created_lambda.arn}"
+    lambda_function_arn = var.on_created_lambda_arn
     events              = ["s3:ObjectCreated:*"]
   }
 

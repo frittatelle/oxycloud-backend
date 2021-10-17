@@ -33,7 +33,14 @@ module "storage" {
 
   region           = var.region
   user_pool_domain = local.user_pool_domain
+
+  on_created_lambda_arn = module.lambdas.on_created_arn  
 }
+
+module "lambdas" {
+  source = "./lambdas"
+}
+
 
 provider "aws" {
   region = var.region
@@ -47,5 +54,6 @@ resource "aws_iam_role_policy_attachment" "authenticated" {
 resource "random_string" "id" {
   length  = 6
   special = false
-  upper = false
+  upper   = false
 }
+
