@@ -53,7 +53,7 @@ resource "aws_iam_policy" "crud_dyndb" {
           "dynamodb:PutItem",
         ]
         Effect   = "Allow"
-        Resource = "*"
+        Resource = "${var.user_storage_table_arn}"
       },
     ]
   })
