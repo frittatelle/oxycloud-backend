@@ -39,8 +39,12 @@ module "storage" {
 
 module "lambdas" {
   source = "./lambdas"
+  user_storage_table_name = module.database.table.name
+  user_storage_table_arn = module.database.table.arn
 }
-
+module "database" {
+  source = "./database"
+}
 
 provider "aws" {
   region = var.region
