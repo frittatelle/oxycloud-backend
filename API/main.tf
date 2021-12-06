@@ -4,6 +4,7 @@ provider "aws" {
 
 resource "aws_api_gateway_rest_api" "OxyApi" {
   name = "OxyApi"
+  binary_media_types = ["*/*"]
 }
 
 resource "aws_api_gateway_authorizer" "user_pool" {
@@ -11,18 +12,11 @@ resource "aws_api_gateway_authorizer" "user_pool" {
   type = "COGNITO_USER_POOLS"
   rest_api_id = aws_api_gateway_rest_api.OxyApi.id
   provider_arns = [var.user_pool_arn]
-
-}
-
-resource "aws_api_gateway_resource" "v1" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  parent_id   = aws_api_gateway_rest_api.OxyApi.root_resource_id
-  path_part   = "v1"
 }
 
 resource "aws_api_gateway_resource" "DocPath" {
   rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  parent_id   = aws_api_gateway_resource.v1.id
+  parent_id   = aws_api_gateway_rest_api.OxyApi.root_resource_id
   path_part   = "docs"
 }
 
@@ -79,4 +73,53 @@ resource "aws_iam_role_policy_attachment" "attach-policy-ddb" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
 
+##LOGS
+resource "aws_api_gateway_account" "API_account" {
+  cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
+}
 
+resource "aws_iam_role" "cloudwatch" {
+  name = "api_gateway_cloudwatch_global"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "apigateway.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "cloudwatch" {
+  name = "default"
+  role = aws_iam_role.cloudwatch.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:DescribeLogGroups",
+                "logs:DescribeLogStreams",
+                "logs:PutLogEvents",
+                "logs:GetLogEvents",
+                "logs:FilterLogEvents"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
