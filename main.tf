@@ -61,3 +61,8 @@ resource "random_string" "id" {
   upper   = false
 }
 
+module "api" {
+  source = "./API"
+  storage_bucketName = module.storage.bucket.name
+  user_pool_arn = module.authorization.user_pool_arn 
+}
