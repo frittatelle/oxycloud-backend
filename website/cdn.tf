@@ -2,14 +2,16 @@
 
 resource "aws_cloudfront_origin_access_identity" "website" {
   comment = "Why we even need this?"
+  count = var.use_cdn ? 1:0
 }
 
 resource "aws_cloudfront_distribution" "website" {
+  count = var.use_cdn ? 1 : 0
   origin {
     domain_name = aws_s3_bucket.hosting.bucket_regional_domain_name
     origin_id   = var.s3_origin_id
     s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.website.cloudfront_access_identity_path
+      origin_access_identity = aws_cloudfront_origin_access_identity.website[0].cloudfront_access_identity_path
     }
   }
 
