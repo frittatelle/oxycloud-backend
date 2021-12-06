@@ -23,12 +23,11 @@ resource "aws_api_gateway_integration" "ListingDocs" {
        "integration.request.header.Content-Type" = "method.request.header.Content-Type"  
   }
   credentials = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
-  #TODO remove hardcode tablename and region
-  uri                     = "arn:aws:apigateway:us-east-1:dynamodb:action/Scan"
+  uri                     = "arn:aws:apigateway:${var.region}:dynamodb:action/Scan"
   request_templates = {
     "application/json" = <<EOF
     {
-    "TableName":"oxycloud",
+    "TableName":"${var.storage_table_name}",
     "FilterExpression": "user_id = :user_id",
     "ExpressionAttributeValues": {
       ":user_id": {"S": "$context.authorizer.claims.cognito:username"}

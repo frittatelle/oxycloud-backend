@@ -28,7 +28,7 @@ resource "aws_api_gateway_integration" "UploadDoc" {
     "integration.request.header.Content-Type" = "method.request.header.Content-Type"  
   }
   credentials = aws_iam_role.APIGatewayS3FullAccess.arn
-  uri = "arn:aws:apigateway:us-east-1:s3:path/${var.storage_bucketName}/{company}/{user}/{filename}"
+  uri = "arn:aws:apigateway:${var.region}:s3:path/${var.storage_bucketName}/{company}/{user}/{filename}"
 }
 
 resource "aws_api_gateway_integration_response" "UploadDoc" {

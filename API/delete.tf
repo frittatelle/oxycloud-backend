@@ -24,12 +24,11 @@ resource "aws_api_gateway_integration" "DeleteDoc" {
        "integration.request.header.Content-Type" = "method.request.header.Content-Type"  
   }
   credentials = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
-  #TODO remove hardcode tablename and region
-  uri                     = "arn:aws:apigateway:us-east-1:dynamodb:action/UpdateItem"
+  uri                     = "arn:aws:apigateway:${var.region}:dynamodb:action/UpdateItem"
   request_templates = {
     "application/json" = <<EOF
     {
-      "TableName":"oxycloud",
+      "TableName":"${var.storage_table_name}",
       "Key":{
           "file_id":{
               "S":"$method.request.path.id"
