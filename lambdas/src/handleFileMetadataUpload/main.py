@@ -9,7 +9,6 @@ s3 = boto3.client('s3')
 
 # TODO: change hardcoded s3 bucket and dynamodb table
 # TODO: try catch block
-# TODO: get displayname and user_id from event
 
 def lambda_handler(event, context):
 
