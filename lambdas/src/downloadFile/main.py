@@ -9,15 +9,15 @@ s3 = boto3.client('s3')
 
 # TODO: change hardcoded s3 bucket and dynamodb table
 # TODO: try catch block
-# TODO: get user_id from event
 
 def lambda_handler(event, context):
     
     file_id = event['pathParameters']['id']
+    user_id = event['requestContext']['authorizer']['claims']['cognito:username']
     record = table.get_item(
         Key = { 
             'file_id':file_id,
-            'user_id':'AROAV6XMGXUC6QVYIKEEB:CognitoIdentityCredentials',
+            'user_id':user_id,
         }
     )
     key = record['Item']['path']
