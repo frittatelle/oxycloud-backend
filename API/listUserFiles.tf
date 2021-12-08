@@ -1,6 +1,3 @@
-# TODO: change scan to query to make dynamodb faster !
-# TODO: change dynamodb attribute user_id the partition key!
-
 resource "aws_api_gateway_method" "ListingDocs" {
   rest_api_id   = aws_api_gateway_rest_api.OxyApi.id
   resource_id   = aws_api_gateway_resource.DocPath.id
@@ -25,16 +22,15 @@ resource "aws_api_gateway_integration" "ListingDocs" {
     "integration.request.header.Content-Type" = "method.request.header.Content-Type"
   }
   credentials = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
-  uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/Scan"
+  uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/Query"
   request_templates = {
     "application/json" = <<EOF
+    #set($user_id = $context.authorizer.claims['cognito:username'])
     {
-    "TableName":"${var.storage_table.name}",
-    "FilterExpression": "user_id = :user_id",
-    "ExpressionAttributeValues": {
-      ":user_id": {"S": "$context.authorizer.claims.cognito:username"}
-    },
-    "ReturnConsumedCapacity": "TOTAL"
+        "TableName":"oxycloud",
+        "KeyConditionExpression":"user_id = :user_id",
+            "ExpressionAttributeValues": {":user_id": { "S": "$user_id"}},
+        "ReturnConsumedCapacity": "TOTAL"
     }
     EOF
   }
