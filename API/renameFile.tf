@@ -28,6 +28,7 @@ resource "aws_api_gateway_integration" "RenameDoc" {
   uri = "arn:aws:apigateway:us-east-1:dynamodb:action/UpdateItem"
   request_templates = {
     "application/json" = <<EOF
+  #set($user_id = $context.authorizer.claims['cognito:username'])
   {
     "TableName":"oxycloud",
     "Key":{
@@ -35,7 +36,7 @@ resource "aws_api_gateway_integration" "RenameDoc" {
             "S":"$method.request.path.id"
         },
         "user_id":{
-          "S":"$context.authorization.claims.cognito:username"
+          "S":"$user_id"
         }
     },
     "UpdateExpression": "set display_name = :filename",
@@ -43,7 +44,7 @@ resource "aws_api_gateway_integration" "RenameDoc" {
     "ExpressionAttributeValues": {
         ":filename": {"S": "$method.request.querystring.filename"},
         ":file_id": {"S: "$method.request.path.file_id"},
-        ":user_id": {"S: "$context.authorizer.claims.cognito:username"}
+        ":user_id": {"S: "$user_id"}
     },
   }
     EOF

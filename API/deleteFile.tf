@@ -27,6 +27,7 @@ resource "aws_api_gateway_integration" "DeleteDoc" {
   uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/UpdateItem"
   request_templates = {
     "application/json" = <<EOF
+    #set($user_id = $context.authorizer.claims['cognito:username'])
     {
       "TableName":"${var.storage_table.name}",
       "Key":{
@@ -34,7 +35,7 @@ resource "aws_api_gateway_integration" "DeleteDoc" {
               "S":"$method.request.path.id"
           },
           "user_id":{
-            "S":"$context.authorizer.claims.cognito:username"
+            "S":"$user_id"
           }
       },
       "UpdateExpression": "set deleted = :deleted",
@@ -42,7 +43,7 @@ resource "aws_api_gateway_integration" "DeleteDoc" {
       "ExpressionAttributeValues": {
           ":deleted": {"BOOL": "$method.request.querystring.deleted"},
           ":file_id": {"S: "$method.request.path.file_id"},
-          ":user_id": {"S: "$context.authorizer.claims.cognito:username"}
+          ":user_id": {"S: "$user_id"}
       },
     }
     EOF
