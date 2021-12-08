@@ -6,11 +6,12 @@ variable "storage_bucketName" {
 
 }
 
-variable "storage_table_name" {
+variable "storage_table" {
 }
 
 variable "region" {
 
 }
+variable "storage_bucket_arn" {}
 
 

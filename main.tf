@@ -7,6 +7,10 @@ terraform {
   }
 }
 
+provider "aws" {
+  region = var.region
+}
+
 module "website" {
   source = "./website"
 
@@ -34,20 +38,17 @@ module "storage" {
   region           = var.region
   user_pool_domain = local.user_pool_domain
 
-  on_created_lambda_arn = module.lambdas.on_created_arn  
+  #on_created_lambda_arn = module.lambdas.on_created_arn  
 }
 
-module "lambdas" {
-  source = "./lambdas"
-  user_storage_table_name = module.database.table.name
-  user_storage_table_arn = module.database.table.arn
-}
+#module "lambdas" {
+#  source = "./lambdas"
+#  user_storage_table_name = module.database.table.name
+#  user_storage_table_arn = module.database.table.arn
+#}
+
 module "database" {
   source = "./database"
-}
-
-provider "aws" {
-  region = var.region
 }
 
 resource "aws_iam_role_policy_attachment" "authenticated" {
@@ -65,6 +66,7 @@ module "api" {
   source = "./API"
   region = var.region
   storage_bucketName = module.storage.bucket.id
-  storage_table_name = module.database.table.name
+  storage_bucket_arn = module.storage.bucket.arn
+  storage_table = module.database.table
   user_pool_arn = module.authorization.user_pool_arn 
 }

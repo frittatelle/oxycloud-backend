@@ -28,7 +28,7 @@ resource "aws_api_gateway_integration" "DeleteDoc" {
   request_templates = {
     "application/json" = <<EOF
     {
-      "TableName":"${var.storage_table_name}",
+      "TableName":"${var.storage_table.name}",
       "Key":{
           "file_id":{
               "S":"$method.request.path.id"

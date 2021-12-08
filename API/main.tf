@@ -1,5 +1,5 @@
 provider "aws" {
-  region  = "us-east-1"
+  region  = var.region
 }
 
 resource "aws_api_gateway_rest_api" "OxyApi" {
@@ -73,53 +73,14 @@ resource "aws_iam_role_policy_attachment" "attach-policy-ddb" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
 
-##LOGS
-resource "aws_api_gateway_account" "API_account" {
-  cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
+module "upload_docs_method" {
+  source = "./upload/"
+  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
+  resource_id = aws_api_gateway_resource.DocID.id
+  region      = var.region
+  storage_bucket_id = var.storage_bucketName
+  storage_bucket_arn = var.storage_bucket_arn
+  storage_table = var.storage_table
+  authorizer_id = aws_api_gateway_authorizer.user_pool.id
 }
 
-resource "aws_iam_role" "cloudwatch" {
-  name = "api_gateway_cloudwatch_global"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "apigateway.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy" "cloudwatch" {
-  name = "default"
-  role = aws_iam_role.cloudwatch.id
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:DescribeLogGroups",
-                "logs:DescribeLogStreams",
-                "logs:PutLogEvents",
-                "logs:GetLogEvents",
-                "logs:FilterLogEvents"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-EOF
-}

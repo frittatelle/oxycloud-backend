@@ -29,7 +29,7 @@ resource "aws_api_gateway_integration" "ListingDocs" {
   request_templates = {
     "application/json" = <<EOF
     {
-    "TableName":"${var.storage_table_name}",
+    "TableName":"${var.storage_table.name}",
     "FilterExpression": "user_id = :user_id",
     "ExpressionAttributeValues": {
       ":user_id": {"S": "$context.authorizer.claims.cognito:username"}
