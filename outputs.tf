@@ -38,3 +38,8 @@ output "WEBSITE_URL" {
 output "HOSTING_BUCKET" {
   value = module.website.hosting_bucket
 }
+output "API_ENDPOINT_URL" {
+  value = module.api.endpoint_url
+}
+
+
