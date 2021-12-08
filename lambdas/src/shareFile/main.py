@@ -10,6 +10,7 @@ dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('oxycloud')
 user_pool = boto3.client('cognito-idp')
 
+
 def lambda_handler(event, context):
 
     share_email = event['queryStringParameters']['share_email']
@@ -39,6 +40,11 @@ def lambda_handler(event, context):
         },
         ReturnValues='UPDATED_NEW'
     )
-    res = json.loads(json.dumps(res, default=str))
     
-    return res
+    return {
+        "isBase64Encoded": "true",
+        "statusCode": 200,
+        "headers":{
+            "Content-Type":"application/json"
+        }
+    }
