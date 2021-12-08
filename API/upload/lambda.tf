@@ -17,6 +17,7 @@ module "lambda_function" {
   store_on_s3 = false
   environment_variables = {
     USER_STORAGE_TABLE = var.storage_table.name
+    USER_STORAGE_BUCKET = var.storage_bucket_id
   }
 }
 resource "aws_iam_policy" "putitem_into_dyndb_for_upload_api" {

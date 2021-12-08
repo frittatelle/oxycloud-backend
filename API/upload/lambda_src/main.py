@@ -2,9 +2,10 @@ import json
 import boto3
 import urllib.parse
 import uuid
+import os
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('oxycloud')
+dynamodb = boto3.resource(os.environ['USER_STORAGE_BUCKET'])
+table = dynamodb.Table(os.environ['USER_STORAGE_TABLE'])
 s3 = boto3.client('s3')
 
 # TODO: change hardcoded s3 bucket and dynamodb table
