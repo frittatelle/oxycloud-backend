@@ -94,6 +94,10 @@ resource "aws_api_gateway_deployment" "OxyApi" {
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = [
+    module.upload_docs_method
+  ]
 }
 
 resource "aws_api_gateway_stage" "dev" {

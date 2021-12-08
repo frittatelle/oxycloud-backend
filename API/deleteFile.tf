@@ -57,7 +57,7 @@ resource "aws_api_gateway_integration_response" "DeleteDoc" {
   response_parameters = {
     "method.response.header.Content-Type" = "integration.response.header.Content-Type"
   }
-  depends_on = [aws_api_gateway_method_response.DeleteDoc_200]
+  depends_on = [aws_api_gateway_integration.DeleteDoc]
 }
 
 resource "aws_api_gateway_method_response" "DeleteDoc_200" {
