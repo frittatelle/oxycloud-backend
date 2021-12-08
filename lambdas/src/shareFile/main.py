@@ -13,7 +13,7 @@ user_pool = boto3.client('cognito-idp')
 def lambda_handler(event, context):
 
     share_email = event['queryStringParameters']['share_email']
-    file_id = event['pathParameters']['file_id']
+    file_id = event['pathParameters']['id']
     user_id = event['requestContext']['authorizer']['claims']['cognito:username']
     
     # get share user 
