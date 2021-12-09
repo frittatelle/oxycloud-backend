@@ -53,6 +53,19 @@ resource "aws_cognito_user_pool" "users_pool" {
     }
   }
 
+  schema {
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    mutable                  = true
+    name                     = "company"
+    required                 = false
+
+    string_attribute_constraints {
+      max_length = "256"
+      min_length = "1"
+    }
+  }
+
   username_configuration {
     case_sensitive = false
   }
