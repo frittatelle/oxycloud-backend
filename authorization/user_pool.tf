@@ -95,6 +95,7 @@ resource "aws_cognito_user_pool_client" "web_client" {
   read_attributes = [
     "address",
     "birthdate",
+    "custom:company",
     "email",
     "email_verified",
     "family_name",
@@ -121,6 +122,7 @@ resource "aws_cognito_user_pool_client" "web_client" {
   write_attributes = [
     "address",
     "birthdate",
+    "custom:company",
     "email",
     "family_name",
     "gender",
