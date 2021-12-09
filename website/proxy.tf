@@ -23,6 +23,8 @@ resource "aws_api_gateway_deployment" "website" {
   depends_on = [
    aws_api_gateway_method.ProxyPath, 
    aws_api_gateway_method.IndexPath, 
+   aws_api_gateway_integration.ProxyPath, 
+   aws_api_gateway_integration.IndexPath, 
   ]
 }
 
