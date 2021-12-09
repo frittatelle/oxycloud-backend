@@ -59,12 +59,12 @@ resource "aws_iam_role" "APIGateway_storage_api_upload" {
   name = "APIGateway-storage-api-upload"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    Statement =  [{
-        Sid = ""
-        Effect = "Allow"
-        Principal = { Service = "apigateway.amazonaws.com" }
-        Action = "sts:AssumeRole"
-      },]})
+    Statement = [{
+      Sid       = ""
+      Effect    = "Allow"
+      Principal = { Service = "apigateway.amazonaws.com" }
+      Action    = "sts:AssumeRole"
+  }, ] })
 
 }
 
@@ -75,15 +75,19 @@ resource "aws_iam_policy" "policy" {
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-        Action = ["s3:PutObject"],
-        Effect = "Allow",
-        Resource = var.storage_bucket_arn
-      },]})
+      Action = [
+        "s3:PutObject",
+        "s3:GetBucketLocation",
+        "s3:ListAllMyBuckets"
+      ],
+      Effect   = "Allow",
+      Resource = "${var.storage_bucket_arn}/*"
+  }, ] })
 }
 
 resource "aws_iam_role_policy_attachment" "attach-policy_agw-s3_upload" {
-  role = aws_iam_role.APIGateway_storage_api_upload.name
-  policy_arn = aws_iam_policy.policy.arn 
+  role       = aws_iam_role.APIGateway_storage_api_upload.name
+  policy_arn = aws_iam_policy.policy.arn
 }
 
 

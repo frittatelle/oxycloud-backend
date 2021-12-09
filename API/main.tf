@@ -1,16 +1,16 @@
 provider "aws" {
-  region  = var.region
+  region = var.region
 }
 
 resource "aws_api_gateway_rest_api" "OxyApi" {
-  name = "OxyApi"
+  name               = "OxyApi"
   binary_media_types = ["*/*"]
 }
 
 resource "aws_api_gateway_authorizer" "user_pool" {
-  name = "OxyApi-user_pool-authorizer"
-  type = "COGNITO_USER_POOLS"
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
+  name          = "OxyApi-user_pool-authorizer"
+  type          = "COGNITO_USER_POOLS"
+  rest_api_id   = aws_api_gateway_rest_api.OxyApi.id
   provider_arns = [var.user_pool_arn]
 }
 
@@ -30,9 +30,9 @@ resource "aws_iam_role" "APIGatewayS3FullAccess" {
   name = "APIGatewayS3FullAccessRole"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    Statement =  [
+    Statement = [
       {
-        Sid = ""
+        Sid    = ""
         Effect = "Allow"
         Principal = {
           Service = "apigateway.amazonaws.com"
@@ -54,9 +54,9 @@ resource "aws_iam_role" "APIGatewayDynamoDBFullAccess" {
   name = "APIGatewayDynamoDBFullAccessRole"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    Statement =  [
+    Statement = [
       {
-        Sid = ""
+        Sid    = ""
         Effect = "Allow"
         Principal = {
           Service = "apigateway.amazonaws.com"
@@ -74,14 +74,14 @@ resource "aws_iam_role_policy_attachment" "attach-policy-ddb" {
 }
 
 module "upload_docs_method" {
-  source = "./upload/"
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  resource_id = aws_api_gateway_resource.DocPath.id
-  region      = var.region
-  storage_bucket_id = var.storage_bucketName
+  source             = "./upload/"
+  rest_api_id        = aws_api_gateway_rest_api.OxyApi.id
+  resource_id        = aws_api_gateway_resource.DocPath.id
+  region             = var.region
+  storage_bucket_id  = var.storage_bucketName
   storage_bucket_arn = var.storage_bucket_arn
-  storage_table = var.storage_table
-  authorizer_id = aws_api_gateway_authorizer.user_pool.id
+  storage_table      = var.storage_table
+  authorizer_id      = aws_api_gateway_authorizer.user_pool.id
 }
 
 resource "aws_api_gateway_deployment" "OxyApi" {

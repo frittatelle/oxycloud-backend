@@ -94,6 +94,7 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "email",
     "openid",
     "phone",
+    "profile",
   ]
   callback_urls = [var.website]
 
