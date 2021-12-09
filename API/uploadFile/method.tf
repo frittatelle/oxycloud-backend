@@ -7,7 +7,7 @@ resource "aws_api_gateway_method" "UploadDoc" {
   authorizer_id = var.authorizer_id
   request_parameters = {
     "method.request.querystring.filename" = true
-    "method.request.header.Content-Type" = true
+    "method.request.header.Content-Type"  = true
   }
 }
 resource "aws_api_gateway_integration" "UploadDoc" {
@@ -18,7 +18,6 @@ resource "aws_api_gateway_integration" "UploadDoc" {
   type                    = "AWS"
   timeout_milliseconds    = 29000
 
-  # TODO: remove custom headers
   request_parameters = {
     "integration.request.path.user"                     = "context.authorizer.claims.cognito:username"
     "integration.request.path.company"                  = "context.authorizer.claims.custom:company"

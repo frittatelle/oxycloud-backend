@@ -4,11 +4,11 @@ import urllib.parse
 import uuid
 import os
 
-dynamodb = boto3.resource(os.environ['USER_STORAGE_BUCKET'])
+dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['USER_STORAGE_TABLE'])
 s3 = boto3.client('s3')
+bucket = os.environ['USER_STORAGE_BUCKET']
 
-# TODO: change hardcoded s3 bucket and dynamodb table
 # TODO: try catch block
 
 def lambda_handler(event, context):
@@ -18,7 +18,7 @@ def lambda_handler(event, context):
     eTag = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['eTag'], encoding='utf-8')
     time = event['Records'][0]['eventTime']
 
-    head = s3.head_object(Bucket = 'oxycloud',Key = key)
+    head = s3.head_object(Bucket = bucket,Key = key)
     user = head['Metadata']['user']
     display_name = head['Metadata']['displayname']
 
