@@ -21,7 +21,7 @@ module "website" {
 locals {
   ##to avoid collitions if we want to deploy multiple with a single aws account
   user_pool_domain = "oxy-user-pool-${random_string.id.result}"
-  website          = "https://${module.website.domain_name}/"
+  website          = "${module.website.domain_name}/"
 }
 
 module "authorization" {
