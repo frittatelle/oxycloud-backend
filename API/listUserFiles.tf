@@ -4,10 +4,8 @@ resource "aws_api_gateway_method" "ListingDocs" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.user_pool.id
-  request_parameters = {
-    "method.request.header.Content-Type" = true
-  }
 }
+
 resource "aws_api_gateway_integration" "ListingDocs" {
   rest_api_id             = aws_api_gateway_rest_api.OxyApi.id
   resource_id             = aws_api_gateway_resource.DocPath.id
