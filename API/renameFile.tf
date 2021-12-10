@@ -7,7 +7,7 @@ resource "aws_api_gateway_method" "RenameDoc" {
   authorizer_id = aws_api_gateway_authorizer.user_pool.id
   request_parameters = {
     "method.request.querystring.filename" = true
-    "method.request.header.Content-Type" = true
+    "method.request.header.Content-Type"  = true
   }
 }
 resource "aws_api_gateway_integration" "RenameDoc" {
@@ -24,13 +24,12 @@ resource "aws_api_gateway_integration" "RenameDoc" {
     "integration.request.header.Content-Type" = "method.request.header.Content-Type"
   }
   credentials = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
-  #TODO remove hardcode tablename and region
-  uri = "arn:aws:apigateway:us-east-1:dynamodb:action/UpdateItem"
+  uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/UpdateItem"
   request_templates = {
     "application/json" = <<EOF
   #set($user_id = $context.authorizer.claims['cognito:username'])
   {
-    "TableName":"oxycloud",
+    "TableName":"${var.storage_table.name}",
     "Key":{
         "file_id":{
             "S":"$method.request.path.id"
@@ -40,12 +39,14 @@ resource "aws_api_gateway_integration" "RenameDoc" {
         }
     },
     "UpdateExpression": "set display_name = :filename",
-    "ConditionExpression": "file_id = :file_id AND user_id = :user_id",
+    
     "ExpressionAttributeValues": {
         ":filename": {"S": "$method.request.querystring.filename"},
-        ":file_id": {"S: "$method.request.path.file_id"},
-        ":user_id": {"S: "$user_id"}
+        ":file_id": {"S": "$method.request.path.id"},
+        ":user_id": {"S": "$user_id"}
     },
+    "ConditionExpression": "file_id = :file_id AND user_id = :user_id",
+    "ReturnValues": "ALL_NEW"
   }
     EOF
   }
