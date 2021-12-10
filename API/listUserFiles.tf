@@ -43,8 +43,26 @@ resource "aws_api_gateway_integration_response" "ListingDocs" {
   resource_id = aws_api_gateway_resource.DocPath.id
   http_method = aws_api_gateway_method.ListingDocs.http_method
   status_code = aws_api_gateway_method_response.ListingDocs_200.status_code
+  content_handling = "CONVERT_TO_TEXT"
   response_parameters = {
     "method.response.header.Content-Type" = "integration.response.header.Content-Type"
+  }
+  response_templates = {
+    "application/json" = <<EOF
+    #set($inputRoot = $util.parseJson($util.base64Decode($input.body)))
+    {
+       "files": [
+          #foreach($it in $inputRoot.Items) {
+          "size":"$it.size.N",
+          "owner":"$it.user_id.S",
+          "last_edit":"$it.time.S",
+          "etag":"$it.eTag.S",
+          "path":"$it.display_name.S"
+          }#if($foreach.hasNext),#end
+          #end
+        ]
+    }
+    EOF
   }
   depends_on = [aws_api_gateway_integration.ListingDocs]
 }
