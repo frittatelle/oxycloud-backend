@@ -7,6 +7,8 @@ resource "aws_api_gateway_method" "DeleteDoc" {
   authorizer_id = aws_api_gateway_authorizer.user_pool.id
   request_parameters = {
     "method.request.querystring.deleted" = true
+    "method.request.header.Content-Type" = true
+
   }
 }
 resource "aws_api_gateway_integration" "DeleteDoc" {

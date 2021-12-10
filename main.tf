@@ -21,7 +21,7 @@ module "website" {
 locals {
   ##to avoid collitions if we want to deploy multiple with a single aws account
   user_pool_domain = "oxy-user-pool-${random_string.id.result}"
-  website          = "${module.website.domain_name}/"
+  website          = "${module.api.endpoint_url}/web"
 }
 
 module "authorization" {
@@ -69,4 +69,6 @@ module "api" {
   storage_bucket_arn = module.storage.bucket.arn
   storage_table = module.database.table
   user_pool_arn = module.authorization.user_pool_arn 
+  #4the workaround
+  s3_website_endpoint = module.website.domain_name
 }
