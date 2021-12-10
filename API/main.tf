@@ -96,6 +96,10 @@ resource "aws_api_gateway_deployment" "OxyApi" {
   }
 
   depends_on = [
+    aws_api_gateway_method.ProxyPath, 
+    aws_api_gateway_method.IndexPath, 
+    aws_api_gateway_integration.ProxyPath, 
+    aws_api_gateway_integration.IndexPath, 
     module.upload_docs_method
   ]
 }
