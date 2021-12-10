@@ -18,6 +18,8 @@ def lambda_handler(event, context):
     eTag = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['eTag'], encoding='utf-8')
     time = event['Records'][0]['eventTime']
 
+    print(key)
+
     head = s3.head_object(Bucket = bucket,Key = key)
     user = head['Metadata']['user']
     display_name = head['Metadata']['displayname']

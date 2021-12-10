@@ -3,44 +3,50 @@ module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "2.22.0"
 
-  function_name = "document-on_upload"
+  function_name = "upload-file"
   description   = "Callback on upload of a object into the storage bucket. NB it can be a new file as an overide"
   handler       = "main.lambda_handler"
   runtime       = "python3.8"
   architectures = ["x86_64"]
   publish       = true
-  
-  timeout       = 30
+
+  timeout = 30
 
   source_path = "${path.module}/lambda_src"
 
   store_on_s3 = false
   environment_variables = {
-    USER_STORAGE_TABLE = var.storage_table.name
+    USER_STORAGE_TABLE  = var.storage_table.name
     USER_STORAGE_BUCKET = var.storage_bucket_id
   }
 }
-resource "aws_iam_policy" "putitem_into_dyndb_for_upload_api" {
-  name        = "putitem_into_dyndb_for_upload-api"
-  description = "allows to put item into ${var.storage_table.arn} (for the lamda of upload api)"
+resource "aws_iam_policy" "lambda_putitem_s3head" {
+  name        = "lambda_putitem_s3head"
+  description = "Allows to put item into ${var.storage_table.arn} and to call the HEAD method on a s3 object"
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-        Action = ["dynamodb:PutItem"]
+    Statement = [
+      {
+        Action   = ["dynamodb:PutItem"]
         Effect   = "Allow"
         Resource = "${var.storage_table.arn}"
-      },]})
+      },
+      {
+        Action   = ["s3:GetObject"]
+        Effect   = "Allow"
+        Resource = "${var.storage_bucket_arn}/*"
+      },
+    ]
+  })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_crud-dyndb" {
+resource "aws_iam_role_policy_attachment" "lambda_putitem_s3head" {
   role       = module.lambda_function.lambda_role_name
-  policy_arn = aws_iam_policy.putitem_into_dyndb_for_upload_api.arn
+  policy_arn = aws_iam_policy.lambda_putitem_s3head.arn
 }
 
 resource "aws_s3_bucket_notification" "triggers" {
   bucket = var.storage_bucket_id
-
-  #count = var.on_created_lambda_arn == null ? 0 : 1
 
   lambda_function {
     lambda_function_arn = module.lambda_function.lambda_function_arn
@@ -54,6 +60,6 @@ resource "aws_lambda_permission" "allow_bucket_on_created" {
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_function.lambda_function_arn
   principal     = "s3.amazonaws.com"
-  source_arn    = var.storage_bucket_arn 
+  source_arn    = var.storage_bucket_arn
 }
 
