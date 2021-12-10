@@ -14,7 +14,7 @@ resource "aws_api_gateway_integration" "ListingDocs" {
   rest_api_id             = aws_api_gateway_rest_api.OxyApi.id
   resource_id             = aws_api_gateway_resource.DocPath.id
   http_method             = aws_api_gateway_method.ListingDocs.http_method
-  integration_http_method = aws_api_gateway_method.ListingDocs.http_method
+  integration_http_method = "POST"
   content_handling        = "CONVERT_TO_TEXT"
   passthrough_behavior    = "WHEN_NO_TEMPLATES"
   type                    = "AWS"
@@ -29,7 +29,7 @@ resource "aws_api_gateway_integration" "ListingDocs" {
     "application/json" = <<EOF
     #set($user_id = $context.authorizer.claims['cognito:username'])
     {
-        "TableName":"oxycloud",
+        "TableName":"${var.storage_table.name}",
         "KeyConditionExpression":"user_id = :user_id",
             "ExpressionAttributeValues": {":user_id": { "S": "$user_id"}},
         "ReturnConsumedCapacity": "TOTAL"

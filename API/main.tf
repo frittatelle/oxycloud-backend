@@ -68,7 +68,7 @@ resource "aws_iam_role" "APIGatewayDynamoDBFullAccess" {
 }
 
 resource "aws_iam_role_policy_attachment" "attach-policy-ddb" {
-  role = aws_iam_role.APIGatewayS3FullAccess.name
+  role = aws_iam_role.APIGatewayDynamoDBFullAccess.name
   #default by aws 
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
