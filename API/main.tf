@@ -89,6 +89,7 @@ module "download_docs_method" {
   rest_api_execution_arn = aws_api_gateway_rest_api.OxyApi.execution_arn
   rest_api_id            = aws_api_gateway_rest_api.OxyApi.id
   resource_id            = aws_api_gateway_resource.DocID.id
+  parent_resource_path   = aws_api_gateway_resource.DocPath.path
   region                 = var.region
   storage_bucket_id      = var.storage_bucketName
   storage_bucket_arn     = var.storage_bucket_arn
@@ -108,10 +109,10 @@ resource "aws_api_gateway_deployment" "OxyApi" {
   }
 
   depends_on = [
-    aws_api_gateway_method.ProxyPath, 
-    aws_api_gateway_method.IndexPath, 
-    aws_api_gateway_integration.ProxyPath, 
-    aws_api_gateway_integration.IndexPath, 
+    aws_api_gateway_method.ProxyPath,
+    aws_api_gateway_method.IndexPath,
+    aws_api_gateway_integration.ProxyPath,
+    aws_api_gateway_integration.IndexPath,
     module.upload_docs_method
   ]
 }

@@ -45,3 +45,7 @@ resource "aws_api_gateway_method_response" "DownloadDoc_200" {
     "application/json" = "Empty"
   }
 }
+
+locals {
+  download_doc_http_method = aws_api_gateway_method.DownloadDoc.http_method
+}

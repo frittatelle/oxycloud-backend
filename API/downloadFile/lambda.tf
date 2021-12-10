@@ -42,6 +42,6 @@ resource "aws_lambda_permission" "allow_api_gateway_invoke" {
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_function.lambda_function_arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${var.rest_api_execution_arn}/*/GET/docs/*"
+  source_arn    = "${var.rest_api_execution_arn}/*/${local.download_doc_http_method}${var.parent_resource_path}/*"
 }
 
