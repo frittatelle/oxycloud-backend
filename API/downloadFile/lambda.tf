@@ -23,13 +23,23 @@ module "lambda_function" {
 resource "aws_iam_policy" "lambda_dyndb_get_item" {
   name        = "lambda_dyndb_get_item"
   description = "allows to get item.path from ${var.storage_table.arn}"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action   = ["dynamodb:GetItem"]
-      Effect   = "Allow"
-      Resource = "${var.storage_table.arn}"
-  }, ] })
+  policy = jsonencode(
+    {
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action   = ["dynamodb:GetItem"]
+          Effect   = "Allow"
+          Resource = "${var.storage_table.arn}"
+        },
+        {
+          Action   = ["s3:GetObject"]
+          Effect   = "Allow"
+          Resource = "${var.storage_bucket_arn}/*"
+        },
+      ]
+    }
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_crud_dyndb" {
