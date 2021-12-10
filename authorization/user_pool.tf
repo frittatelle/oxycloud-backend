@@ -96,8 +96,11 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "phone",
     "profile",
   ]
-  callback_urls = [var.website]
+  callback_urls          = [var.website]
+  refresh_token_validity = 30
 
+  # TODO: change token validity when deployed in prod (2 hours in dev)
+  id_token_validity = 2
   explicit_auth_flows = [
     "ALLOW_CUSTOM_AUTH",
     "ALLOW_REFRESH_TOKEN_AUTH",
@@ -128,7 +131,6 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "website",
     "zoneinfo",
   ]
-  refresh_token_validity = 30
   supported_identity_providers = [
     "COGNITO",
   ]
