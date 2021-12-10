@@ -98,7 +98,8 @@ module "download_docs_method" {
 }
 
 resource "aws_api_gateway_deployment" "OxyApi" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
+  rest_api_id       = aws_api_gateway_rest_api.OxyApi.id
+  stage_description = "Deployed at ${timestamp()}"
 
   triggers = {
     redeployment = sha1(jsonencode(aws_api_gateway_rest_api.OxyApi.body))
