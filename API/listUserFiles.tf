@@ -53,6 +53,7 @@ resource "aws_api_gateway_integration_response" "ListingDocs" {
     {
        "files": [
           #foreach($it in $inputRoot.Items) {
+          "id":"$it.file_id.S",
           "size":"$it.size.N",
           "owner":"$it.user_id.S",
           "last_edit":"$it.time.S",
