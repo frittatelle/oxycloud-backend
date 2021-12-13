@@ -6,8 +6,9 @@ resource "aws_api_gateway_method" "ShareDoc" {
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = var.authorizer_id
   request_parameters = {
-    "method.request.path.id"             = true
-    "method.request.header.Content-Type" = true
+    "method.request.path.id"                 = true
+    "method.request.header.Content-Type"     = true
+    "method.request.querystring.share_email" = true
   }
 }
 resource "aws_api_gateway_integration" "ShareDoc" {
