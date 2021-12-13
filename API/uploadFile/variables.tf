@@ -13,3 +13,5 @@ variable "storage_table" {
 }
 
 variable "authorizer_id" {}
+variable "rest_api_execution_arn" {}
+variable "parent_resource_path" {}

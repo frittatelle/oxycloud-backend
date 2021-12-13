@@ -82,6 +82,8 @@ module "upload_docs_method" {
   storage_bucket_arn = var.storage_bucket_arn
   storage_table      = var.storage_table
   authorizer_id      = aws_api_gateway_authorizer.user_pool.id
+  rest_api_execution_arn = aws_api_gateway_rest_api.OxyApi.execution_arn
+  parent_resource_path   = aws_api_gateway_resource.DocPath.path
 }
 
 module "download_docs_method" {
