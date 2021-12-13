@@ -2,6 +2,10 @@ variable "user_pool_arn" {
 
 }
 
+variable "user_pool_id" {
+
+}
+
 variable "storage_bucketName" {
 
 }
