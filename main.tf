@@ -34,11 +34,7 @@ module "authorization" {
 
 module "storage" {
   source = "./storage"
-
-  region           = var.region
-  user_pool_domain = local.user_pool_domain
-
-  #on_created_lambda_arn = module.lambdas.on_created_arn  
+  region = var.region
 }
 
 #module "lambdas" {
@@ -49,11 +45,6 @@ module "storage" {
 
 module "database" {
   source = "./database"
-}
-
-resource "aws_iam_role_policy_attachment" "authenticated" {
-  role       = module.authorization.authenticated_role_name
-  policy_arn = module.storage.user_access_policy.arn
 }
 
 resource "random_string" "id" {
