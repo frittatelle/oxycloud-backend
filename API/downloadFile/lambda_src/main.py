@@ -4,8 +4,9 @@ import base64
 import os
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table(os.environ['USER_STORAGE_TABLE'])
 s3 = boto3.client('s3')
+lifetime = os.environ.get("PRESIGNED_URL_LIFETIME",300)
+table = dynamodb.Table(os.environ['USER_STORAGE_TABLE'])
 bucket = os.environ['USER_STORAGE_BUCKET']
 
 # TODO: try catch block
@@ -23,18 +24,15 @@ def lambda_handler(event, context):
     key = record['Item']['path']
     file_name = record['Item']['display_name']
     
-    # s3 call
-    s3_object = s3.get_object(Bucket = bucket, Key = key)
-    file_content = s3_object['Body'].read()
-    res = {
+    # s3 signed url
+    url = s3.generate_presigned_url('get_object',
+        Params={'Bucket': bucket, 'Key': key},
+        ExpiresIn=lifetime
+    )
+    print(url)
+    
+    return {
         'statusCode':200,
-        'headers':{
-            'Content-Type':s3_object['ContentType'],
-            'Content-Disposition':"attachment; filename={}".format(file_name)
-        },
-        'body': base64.b64encode(file_content),
-        'isBase64Encoded': True
+        'body': url,
     }
 
-    
-    return res
