@@ -124,6 +124,21 @@ module "share_docs_method" {
   user_pool_id           = var.user_pool_id
 }
 
+module "unshare_docs_method" {
+  source                 = "./unshareFile/"
+  rest_api_execution_arn = aws_api_gateway_rest_api.OxyApi.execution_arn
+  rest_api_id            = aws_api_gateway_rest_api.OxyApi.id
+  resource_id            = aws_api_gateway_resource.ShareID.id
+  parent_resource_path   = aws_api_gateway_resource.SharePath.path
+  region                 = var.region
+  storage_bucket_id      = var.storage_bucketName
+  storage_bucket_arn     = var.storage_bucket_arn
+  storage_table          = var.storage_table
+  authorizer_id          = aws_api_gateway_authorizer.user_pool.id
+  user_pool_arn          = var.user_pool_arn
+  user_pool_id           = var.user_pool_id
+}
+
 resource "aws_api_gateway_deployment" "OxyApi" {
   rest_api_id       = aws_api_gateway_rest_api.OxyApi.id
   stage_description = "Deployed at ${timestamp()}"
@@ -144,6 +159,7 @@ resource "aws_api_gateway_deployment" "OxyApi" {
     module.upload_docs_method,
     module.download_docs_method,
     module.share_docs_method,
+    module.unshare_docs_method
   ]
 }
 
