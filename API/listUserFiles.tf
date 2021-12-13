@@ -53,20 +53,46 @@ resource "aws_api_gateway_integration_response" "ListingDocs" {
   }
   response_templates = {
     "application/json" = <<EOF
-    #set($inputRoot = $util.parseJson($util.base64Decode($input.body)))
+#set($inputRoot = $util.parseJson($util.base64Decode($input.body)))
+
+#set($files=[])
+#foreach($it in $inputRoot.Items)
+#if(!$it.is_folder.BOOL)
+#set($bar = $files.add($it))
+#end
+#end
+
+#set($folders=[])
+#foreach($it in $inputRoot.Items)
+#if($it.is_folder.BOOL)
+#set($bar = $folders.add($it))
+#end
+#end
+{
+ "files": [
+    #foreach($it in $files)
     {
-       "files": [
-          #foreach($it in $inputRoot.Items) {
-          "id":"$it.file_id.S",
-          "size":$it.size.N,
-          "owner":"$it.user_id.S",
-          "last_edit":"$it.time.S",
-          "etag":"$it.eTag.S",
-          "path":"$it.display_name.S"
-          }#if($foreach.hasNext),#end
-          #end
-        ]
-    }
+    "id":"$it.file_id.S",
+    "size":$it.size.N,
+    "owner":"$it.user_id.S",
+    "last_edit":"$it.time.S",
+    "etag":"$it.eTag.S",
+    "folder":"$it.folder.S",
+    "path":"$it.display_name.S"
+    }#if($foreach.hasNext),#end
+    #end
+  ],
+ "folders": [
+    #foreach($it in $folders)
+    {
+    "id":"$it.file_id.S",
+    "owner":"$it.user_id.S",
+    "path":"$it.display_name.S"
+    }#if($foreach.hasNext),#end
+    #end
+  ]
+
+}
     EOF
   }
   depends_on = [aws_api_gateway_integration.ListingDocs]
