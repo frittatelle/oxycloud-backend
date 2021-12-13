@@ -18,21 +18,29 @@ def lambda_handler(event, context):
     eTag = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['eTag'], encoding='utf-8')
     time = event['Records'][0]['eventTime']
 
-    print(key)
-
     head = s3.head_object(Bucket = bucket,Key = key)
     user = head['Metadata']['user']
     display_name = head['Metadata']['displayname']
+
+    folder = display_name.split("/")
+    if len(folder)>1:
+        folder = "/".join(folder[:-1])
+    else:
+        folder = ""
+    
+    #TODO: add folder if not exist
 
     response = table.put_item(
         Item={
             'file_id': str(uuid.uuid4()),
             'user_id': user,
-            'display_name': display_name,
+            'display_name': display_name, #is full path necessary?
             'path': key,
             'size': size,
             'eTag': eTag,
-            'time': time
+            'time': time,
+            'folder': folder,
+            'is_folder': False
         }
     )
 
