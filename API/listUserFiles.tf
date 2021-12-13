@@ -24,14 +24,15 @@ resource "aws_api_gateway_integration" "ListingDocs" {
     "integration.request.header.Content-Type" = "method.request.header.Content-Type"
   }
   credentials = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
-  uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/Scan"
+  uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/Query"
   request_templates = {
     "application/json" = <<EOF
     #set($user_id = $context.authorizer.claims['cognito:username'])
     #set($folder  = $method.request.querystring.folder) 
     {
       "TableName":"${var.storage_table.name}",
-      "FilterExpression":"user_id = :user_id AND folder = :folder",
+      "KeyConditionExpression":"user_id = :user_id",
+      "FilterExpression":"folder = :folder",
       "ExpressionAttributeValues": {
         ":user_id": { "S": "$user_id"},
         ":folder":  { "S": "$folder"}
