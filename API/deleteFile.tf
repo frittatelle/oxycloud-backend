@@ -6,9 +6,9 @@ resource "aws_api_gateway_method" "DeleteDoc" {
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.user_pool.id
   request_parameters = {
-    "method.request.querystring.deleted" = true
+    "method.request.querystring.delete"  = true
+    "method.request.querystring.doom"    = false
     "method.request.header.Content-Type" = true
-
   }
 }
 resource "aws_api_gateway_integration" "DeleteDoc" {
@@ -39,9 +39,10 @@ resource "aws_api_gateway_integration" "DeleteDoc" {
           "S":"$user_id"
         }
     },
-    "UpdateExpression": "set deleted = :deleted",
+    "UpdateExpression": "SET is_deleted = :deleted, is_doomed = :doomed",
     "ExpressionAttributeValues": {
-        ":deleted": {"BOOL": $method.request.querystring.deleted},
+        ":is_deleted": {"BOOL": $method.request.querystring.delete},
+        ":is_doomed": {"BOOL": $method.request.querystring.doom}
         ":file_id": {"S": "$method.request.path.id"},
         ":user_id": {"S": "$user_id"}
     },
@@ -75,5 +76,3 @@ resource "aws_api_gateway_method_response" "DeleteDoc_200" {
     "application/json" = "Empty"
   }
 }
-
-
