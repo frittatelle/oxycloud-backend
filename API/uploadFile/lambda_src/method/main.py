@@ -3,16 +3,19 @@ import boto3
 import base64
 import os
 import uuid
+from botocore.config import Config
 
-dynamodb = boto3.resource('dynamodb')
-s3 = boto3.client('s3')
+my_config = Config(
+    signature_version = 's3v4',
+)
+s3 = boto3.client('s3', config=my_config)
+
 lifetime = os.environ.get("PRESIGNED_URL_LIFETIME",300)
 bucket = os.environ['USER_STORAGE_BUCKET']
 
 # TODO: try catch block
 
 def lambda_handler(event, context):
-    
     user_id     = event['requestContext']['authorizer']['claims']['cognito:username']
     company     = event['requestContext']['authorizer']['claims']['custom:company']
     file_name   = event["queryStringParameters"]['filename']
@@ -25,6 +28,11 @@ def lambda_handler(event, context):
             "x-amz-meta-displayname":file_name,
             "x-amz-meta-user":user_id,
         }, 
+        Conditions=[
+            ['eq','$x-amz-meta-user',user_id],
+            ['eq','$x-amz-meta-displayname',file_name],
+            ['eq', '$key',key]
+        ],
         ExpiresIn=lifetime
     )
     
@@ -32,5 +40,4 @@ def lambda_handler(event, context):
         'statusCode':200,
         'body': json.dumps(res),
     }
-
 
