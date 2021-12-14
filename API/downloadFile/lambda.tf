@@ -47,7 +47,7 @@ resource "aws_iam_role_policy_attachment" "lambda_crud_dyndb" {
   policy_arn = aws_iam_policy.lambda_dyndb_get_item.arn
 }
 
-resource "aws_lambda_permission" "allow_api_gateway_invoke" {
+resource "aws_lambda_permission" "allow_api_gateway_invoke_downloadLambda" {
   statement_id  = "AllowApiGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_function.lambda_function_arn

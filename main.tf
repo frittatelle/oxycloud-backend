@@ -54,12 +54,13 @@ resource "random_string" "id" {
 }
 
 module "api" {
-  source = "./API"
-  region = var.region
+  source             = "./API"
+  region             = var.region
   storage_bucketName = module.storage.bucket.id
   storage_bucket_arn = module.storage.bucket.arn
-  storage_table = module.database.table
-  user_pool_arn = module.authorization.user_pool_arn 
+  storage_table      = module.database.table
+  user_pool_arn      = module.authorization.user_pool_arn
+  user_pool_id       = module.authorization.user_pool
   #4the workaround
   s3_website_endpoint = module.website.domain_name
 }
