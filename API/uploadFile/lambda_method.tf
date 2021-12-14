@@ -17,15 +17,20 @@ module "lambda_method" {
   store_on_s3 = false
   environment_variables = {
     USER_STORAGE_BUCKET = var.storage_bucket_id
+    USER_STORAGE_TABLE = var.storage_table.name
   }
 }
 resource "aws_iam_policy" "lambda_s3_putobj" {
   name        = "lambda_s3_putobj"
-  description = "allows to put object into ${var.storage_bucket_arn}"
-  policy = jsonencode(
-    {
+  description = "allows to put object into ${var.storage_bucket_arn} and items into Dynamo"
+  policy = jsonencode({
       Version = "2012-10-17"
       Statement = [
+        {
+          Action   = ["dynamodb:PutItem"]
+          Effect   = "Allow"
+          Resource = "${var.storage_table.arn}"
+        },
        {
           Action   = ["s3:PutObject"]
           Effect   = "Allow"
