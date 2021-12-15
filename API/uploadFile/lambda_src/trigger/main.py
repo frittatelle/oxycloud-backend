@@ -3,6 +3,7 @@ import boto3
 import urllib.parse
 import uuid
 import os
+from base64 import b64decode
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['USER_STORAGE_TABLE'])
@@ -21,6 +22,7 @@ def lambda_handler(event, context):
     head = s3.head_object(Bucket = bucket,Key = key)
     user = head['Metadata']['user']
     display_name = head['Metadata']['displayname']
+    display_name = b64decode(display_name).decode('utf8')
 
     folder = display_name.split("/")
     if len(folder)>1:
@@ -28,8 +30,6 @@ def lambda_handler(event, context):
     else:
         folder = ""
     
-    #TODO: add folder if not exist
-
     response = table.put_item(
         Item={
             'file_id': str(uuid.uuid4()),

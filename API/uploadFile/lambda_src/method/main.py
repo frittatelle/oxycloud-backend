@@ -4,11 +4,14 @@ import os
 import uuid
 from datetime import datetime
 from botocore.config import Config
+from base64 import b64encode
 
 lifetime = os.environ.get("PRESIGNED_URL_LIFETIME",300)
 bucket = os.environ['USER_STORAGE_BUCKET']
 TABLE = os.environ['USER_STORAGE_TABLE']
-
+def encode(data):
+    encodedBytes = b64encode(data.encode("utf-8"))
+    return str(encodedBytes, "utf-8")
 # TODO: try catch block
 
 def lambda_handler(event, context):
@@ -44,11 +47,12 @@ def lambda_handler(event, context):
     else:
         s3 = boto3.client('s3', config=Config(signature_version = 's3v4'))
         key = f"{company}/{user_id}/{str(uuid.uuid4())}"
+        file_name = encode(file_name)
         # s3 signed url
         res = s3.generate_presigned_post(bucket, 
             key, 
             Fields={
-                "x-amz-meta-displayname":file_name,
+                "x-amz-meta-displayname": file_name, 
                 "x-amz-meta-user":user_id,
             }, 
             Conditions=[
