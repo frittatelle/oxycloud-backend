@@ -86,14 +86,14 @@ resource "aws_iam_role_policy_attachment" "attach-policy-ddb" {
 }
 
 module "upload_docs_method" {
-  source             = "./uploadFile/"
-  rest_api_id        = aws_api_gateway_rest_api.OxyApi.id
-  resource_id        = aws_api_gateway_resource.DocPath.id
-  region             = var.region
-  storage_bucket_id  = var.storage_bucketName
-  storage_bucket_arn = var.storage_bucket_arn
-  storage_table      = var.storage_table
-  authorizer_id      = aws_api_gateway_authorizer.user_pool.id
+  source                 = "./uploadFile/"
+  rest_api_id            = aws_api_gateway_rest_api.OxyApi.id
+  resource_id            = aws_api_gateway_resource.DocPath.id
+  region                 = var.region
+  storage_bucket_id      = var.storage_bucketName
+  storage_bucket_arn     = var.storage_bucket_arn
+  storage_table          = var.storage_table
+  authorizer_id          = aws_api_gateway_authorizer.user_pool.id
   rest_api_execution_arn = aws_api_gateway_rest_api.OxyApi.execution_arn
   parent_resource_path   = aws_api_gateway_resource.DocPath.path
 }
@@ -139,6 +139,16 @@ module "unshare_docs_method" {
   authorizer_id          = aws_api_gateway_authorizer.user_pool.id
   user_pool_arn          = var.user_pool_arn
   user_pool_id           = var.user_pool_id
+}
+
+module "doom_docs_lambda" {
+  source                   = "./doomFile/"
+  region                   = var.region
+  storage_bucket_id        = var.storage_bucketName
+  storage_bucket_arn       = var.storage_bucket_arn
+  storage_table            = var.storage_table
+  storage_table_arn        = var.storage_table_arn
+  storage_table_stream_arn = var.storage_table_stream_arn
 }
 
 resource "aws_api_gateway_deployment" "OxyApi" {

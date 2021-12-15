@@ -13,6 +13,14 @@ variable "storage_bucketName" {
 variable "storage_table" {
 }
 
+variable "storage_table_arn" {
+
+}
+
+variable "storage_table_stream_arn" {
+
+}
+
 variable "region" {
 
 }
