@@ -5,6 +5,7 @@ resource "aws_api_gateway_method" "ListingDocs" {
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.user_pool.id
   request_parameters = {
+    "method.request.querystring.deleted" = false
     "method.request.header.Content-Type" = true
   }
 
@@ -28,13 +29,18 @@ resource "aws_api_gateway_integration" "ListingDocs" {
   request_templates = {
     "application/json" = <<EOF
     #set($user_id = $context.authorizer.claims['cognito:username'])
+    #set($deleted = $method.request.querystring.deleted)
+    #if(!$deleted || $deleted.equals("")) 
+      #set($deleted = false)
+    #end
     #set($folder  = $method.request.querystring.folder) 
     {
       "TableName":"${var.storage_table.name}",
       "KeyConditionExpression":"user_id = :user_id",
-      "FilterExpression":"folder = :folder",
+      "FilterExpression":"folder = :folder AND is_deleted = :deleted",
       "ExpressionAttributeValues": {
         ":user_id": { "S": "$user_id"},
+        ":deleted": { "BOOL": $deleted},
         ":folder":  { "S": "$folder"}
       },
       "ReturnConsumedCapacity": "TOTAL"
