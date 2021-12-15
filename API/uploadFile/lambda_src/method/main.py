@@ -39,14 +39,16 @@ def lambda_handler(event, context):
                     'eTag': "",
                     'time': time,
                     'folder': folder,
-                    'is_folder': True
+                    'is_folder': True,
+                    'is_deleted': False,
+                    'is_doomed': False
                 }
             )
 
         return {'statusCode':200}
     else:
         s3 = boto3.client('s3', config=Config(signature_version = 's3v4'))
-        key = f"{company}/{user_id}/{str(uuid.uuid4())}"
+        key = str(uuid.uuid4())
         file_name = encode(file_name)
         # s3 signed url
         res = s3.generate_presigned_post(bucket, 

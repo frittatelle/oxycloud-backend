@@ -24,23 +24,28 @@ def lambda_handler(event, context):
     display_name = head['Metadata']['displayname']
     display_name = b64decode(display_name).decode('utf8')
 
-    folder = display_name.split("/")
-    if len(folder)>1:
-        folder = "/".join(folder[:-1])
+    tmp = display_name.split("/")
+    if len(tmp)>1:
+        folder = "/".join(tmp[:-1])
+        display_name = tmp[-1]
     else:
         folder = ""
     
+    file_id = key.split("/")[-1]
+    
     response = table.put_item(
         Item={
-            'file_id': str(uuid.uuid4()),
+            'file_id': file_id,
             'user_id': user,
             'display_name': display_name, #is full path necessary?
-            'path': key,
+            'path': key, #TODO: rm me
             'size': size,
             'eTag': eTag,
             'time': time,
             'folder': folder,
-            'is_folder': False
+            'is_folder': False,
+            'is_deleted': False,
+            'is_doomed': False
         }
     )
 
