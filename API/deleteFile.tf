@@ -6,7 +6,7 @@ resource "aws_api_gateway_method" "DeleteDoc" {
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.user_pool.id
   request_parameters = {
-    "method.request.querystring.delete"  = true
+    "method.request.querystring.delete"  = false
     "method.request.querystring.doom"    = false
     "method.request.header.Content-Type" = true
   }
@@ -28,6 +28,15 @@ resource "aws_api_gateway_integration" "DeleteDoc" {
   uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/UpdateItem"
   request_templates = {
     "application/json" = <<EOF
+  #set($doom = $method.request.querystring.doom)
+  #if(!$doom)
+    #set($doom = false)
+  #end
+  #set($delete = $method.request.querystring.delete)
+  #if(!$delete)
+    #set($delete = false)
+  #end
+
   #set($user_id = $context.authorizer.claims['cognito:username'])
   {
     "TableName":"${var.storage_table.name}",
@@ -41,8 +50,8 @@ resource "aws_api_gateway_integration" "DeleteDoc" {
     },
     "UpdateExpression": "SET is_deleted = :deleted, is_doomed = :doomed",
     "ExpressionAttributeValues": {
-        ":is_deleted": {"BOOL": $method.request.querystring.delete},
-        ":is_doomed": {"BOOL": $method.request.querystring.doom}
+        ":deleted": {"BOOL": $delete},
+        ":doomed": {"BOOL": $doom},
         ":file_id": {"S": "$method.request.path.id"},
         ":user_id": {"S": "$user_id"}
     },
