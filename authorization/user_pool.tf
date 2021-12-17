@@ -10,6 +10,9 @@ resource "aws_cognito_user_pool" "users_pool" {
   mfa_configuration = "OFF"
   name              = "oxygen_dev"
   tags              = {}
+  username_configuration {
+    case_sensitive = false
+  }
 
   account_recovery_setting {
     recovery_mechanism {
@@ -67,11 +70,17 @@ resource "aws_cognito_user_pool" "users_pool" {
     }
   }
 
-  username_configuration {
-    case_sensitive = false
+  schema {
+    attribute_data_type      = "Number"
+    developer_only_attribute = false
+    mutable                  = true
+    name                     = "subscription_plan"
+    required                 = false
+    number_attribute_constraints {
+      max_value = 500
+      min_value = 50
+    }
   }
-
-
 
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
@@ -116,6 +125,7 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "address",
     "birthdate",
     "custom:company",
+    "custom:subscription_plan",
     "email",
     "email_verified",
     "family_name",
@@ -142,6 +152,7 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "address",
     "birthdate",
     "custom:company",
+    "custom:subscription_plan",
     "email",
     "family_name",
     "gender",
