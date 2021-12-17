@@ -10,10 +10,12 @@ bucket = os.environ['USER_STORAGE_BUCKET']
 
 def lambda_handler(event, context):
     
-    print(json.dumps(event, indent=2))
+    key = event['Records'][0]['dynamodb']['NewImage']['path']['S']
+    res = s3.delete_object(Bucket = bucket, Key = key)
+
     return {
         'statusCode': 200,
-        'body': json.dumps('Hello from Lambda!')
+        'body': json.dumps(f'{key} deleted from S3 bucket')
     }
 
 
