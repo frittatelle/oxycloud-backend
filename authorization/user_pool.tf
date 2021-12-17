@@ -1,9 +1,10 @@
 # aws_cognito_user_pool.users_pool:
 resource "aws_cognito_user_pool" "users_pool" {
-  alias_attributes = [
-    "preferred_username",
-  ]
+
   auto_verified_attributes = [
+    "email",
+  ]
+  username_attributes = [
     "email",
   ]
   mfa_configuration = "OFF"
@@ -12,7 +13,7 @@ resource "aws_cognito_user_pool" "users_pool" {
 
   account_recovery_setting {
     recovery_mechanism {
-      name     = "admin_only"
+      name     = "verified_email"
       priority = 1
     }
   }
@@ -69,6 +70,8 @@ resource "aws_cognito_user_pool" "users_pool" {
   username_configuration {
     case_sensitive = false
   }
+
+
 
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
