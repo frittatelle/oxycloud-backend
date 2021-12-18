@@ -85,7 +85,7 @@ resource "aws_api_gateway_integration_response" "ListingDocs" {
     "last_edit":"$it.time.S",
     "etag":"$it.eTag.S",
     "folder":"$it.folder.S",
-    "path":"$it.display_name.S"
+    "name":"$it.display_name.S"
     }#if($foreach.hasNext),#end
     #end
   ],
@@ -94,7 +94,7 @@ resource "aws_api_gateway_integration_response" "ListingDocs" {
     {
     "id":"$it.file_id.S",
     "owner":"$it.user_id.S",
-    "path":"$it.display_name.S"
+    "name":"$it.display_name.S"
     }#if($foreach.hasNext),#end
     #end
   ]

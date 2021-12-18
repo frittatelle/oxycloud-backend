@@ -19,16 +19,11 @@ def lambda_handler(event, context):
     company     = event['requestContext']['authorizer']['claims']['custom:company']
     file_name   = event["queryStringParameters"]['filename']
     is_folder   = bool(event["queryStringParameters"].get('is_folder',False))
+    folder      = event["queryStringParameters"].get('folder','')
     if is_folder:
         dyndb = boto3.resource("dynamodb")
         table = dyndb.Table(TABLE)
         time = str(datetime.utcnow()).replace(" ","T") + "Z"
-        
-        folder = file_name.split("/")
-        if len(folder)>1:
-            folder = "/".join(folder[:-1])
-        else:
-            folder = ""
         response = table.put_item(
                 Item={
                     'file_id': str(uuid.uuid4()),
@@ -55,11 +50,13 @@ def lambda_handler(event, context):
             key, 
             Fields={
                 "x-amz-meta-displayname": file_name, 
+                "x-amz-meta-folder": folder, 
                 "x-amz-meta-user":user_id,
             }, 
             Conditions=[
                 ['eq','$x-amz-meta-user',user_id],
                 ['eq','$x-amz-meta-displayname',file_name],
+                ['eq','$x-amz-meta-folder',folder],
                 ['eq', '$key',key]
             ],
             ExpiresIn=lifetime

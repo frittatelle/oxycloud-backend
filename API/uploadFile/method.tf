@@ -8,6 +8,7 @@ resource "aws_api_gateway_method" "UploadDoc" {
   request_parameters = {
     "method.request.querystring.filename" = true
     "method.request.querystring.is_folder" = true
+    "method.request.querystring.folder" = true
     "method.request.header.Content-Type"  = true
   }
 }
