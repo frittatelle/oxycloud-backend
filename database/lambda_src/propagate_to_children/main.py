@@ -28,13 +28,20 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 def update_children(user_id,folder_id,doomed,deleted):
+    #TODO use folder as secondary index and use it to query
+    #asitis it will querry all users files and filter them out
+    # => COSTLY
     res = table.query(
         KeyConditionExpression="user_id = :user", 
-        FilterExpression="folder = :folder",
+        FilterExpression="""
+        folder = :folder AND (is_doom <> :doomed OR is_deleted <> :deleted)
+        """.strip(),
         ProjectionExpression="file_id",
         ExpressionAttributeValues={
             ":user":user_id,
-            ":folder":folder_id
+            ":folder":folder_id,
+            ':deleted': deleted,
+            ':doomed': doomed
     })
 
     updates = [
