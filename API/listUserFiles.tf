@@ -37,11 +37,12 @@ resource "aws_api_gateway_integration" "ListingDocs" {
     {
       "TableName":"${var.storage_table.name}",
       "KeyConditionExpression":"user_id = :user_id",
-      "FilterExpression":"folder = :folder AND is_deleted = :deleted",
+      "FilterExpression":"folder = :folder AND is_deleted = :deleted AND is_doomed = :doomed",
       "ExpressionAttributeValues": {
         ":user_id": { "S": "$user_id"},
         ":deleted": { "BOOL": $deleted},
-        ":folder":  { "S": "$folder"}
+        ":folder":  { "S": "$folder"},
+        ":doomed": { "BOOL": false}
       },
       "ReturnConsumedCapacity": "TOTAL"
     }
