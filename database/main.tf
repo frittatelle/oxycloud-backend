@@ -5,7 +5,7 @@ module "dynamodb_table" {
   hash_key         = "user_id"
   range_key        = "file_id"
   stream_enabled   = true
-  stream_view_type = "NEW_IMAGE"
+  stream_view_type = "NEW_AND_OLD_IMAGES"
   attributes = [
     {
       name = "file_id"
@@ -16,6 +16,12 @@ module "dynamodb_table" {
       type = "S"
     },
   ]
+}
+
+locals {
+  table_arn = module.dynamodb_table.dynamodb_table_arn 
+  table_name = module.dynamodb_table.dynamodb_table_id 
+  table_stream_arn = module.dynamodb_table.dynamodb_table_stream_arn
 }
 
 output "table" {
