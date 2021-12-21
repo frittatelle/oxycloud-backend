@@ -15,12 +15,32 @@ def lambda_handler(event, context):
     
     file_id = event['pathParameters']['id']
     user_id = event['requestContext']['authorizer']['claims']['cognito:username']
-    record = table.get_item(
-        Key = { 
-            'file_id':file_id,
-            'user_id':user_id,
-        }
-    )
+    try:
+        record = table.get_item(
+            Key = {
+                'user_id':user_id,
+                'file_id':file_id,
+            }
+        )
+        if 'Item' not in record:
+            #the user isn't the owner or the files doesn't exist
+            # if owner_id params is avaible check if the owner
+            # shared the file with this user
+            owner_id = event['queryStringParameters']['owner_id']
+            record = table.get_item(
+                    Key = {
+                        'user_id':owner_id,
+                        'file_id':file_id,
+                    }
+            )
+            if user_id not in record['Item']['shared_with']:
+                raise "not authorized"
+    except:
+            return { 
+                    'statusCode':400,
+                    'body':{'message':'file not found'}
+            }
+        
     key = record['Item']['file_id']
     file_name = record['Item']['display_name']
     
