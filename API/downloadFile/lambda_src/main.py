@@ -21,7 +21,7 @@ def lambda_handler(event, context):
             'user_id':user_id,
         }
     )
-    key = record['Item']['path']
+    key = record['Item']['file_id']
     file_name = record['Item']['display_name']
     
     # s3 signed url
