@@ -58,7 +58,7 @@ resource "aws_api_gateway_integration_response" "ListingDocsSharedWithUser" {
           "owner":"$it.user_id.S",
           "last_edit":"$it.time.S",
           "etag":"$it.eTag.S",
-          "path":"$it.display_name.S"
+          "name":"$it.display_name.S"
           }#if($foreach.hasNext),#end
           #end
         ]
