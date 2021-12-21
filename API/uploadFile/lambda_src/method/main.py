@@ -28,8 +28,7 @@ def lambda_handler(event, context):
                 Item={
                     'file_id': str(uuid.uuid4()),
                     'user_id': user_id,
-                    'display_name': file_name, #is full path necessary?
-                    'path': "",
+                    'display_name': file_name, 
                     'size': 0,
                     'eTag': "",
                     'time': time,

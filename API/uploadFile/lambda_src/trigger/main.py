@@ -32,7 +32,6 @@ def lambda_handler(event, context):
             'file_id': file_id,
             'user_id': user,
             'display_name': display_name, #is full path necessary?
-            'path': key, #TODO: rm me
             'size': size,
             'eTag': eTag,
             'time': time,
