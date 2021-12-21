@@ -61,7 +61,9 @@ resource "aws_api_gateway_integration_response" "ListingDocsSharedWithUser" {
           "name":"$it.display_name.S"
           }#if($foreach.hasNext),#end
           #end
-        ]
+        ],
+      ## folders will not propably handled for sharing
+      "folders":[]
     }
     EOF
   }
