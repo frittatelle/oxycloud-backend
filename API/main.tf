@@ -1,7 +1,3 @@
-provider "aws" {
-  region = var.region
-}
-
 resource "aws_api_gateway_rest_api" "OxyApi" {
   name               = "OxyApi"
   binary_media_types = ["*/*"]
@@ -35,6 +31,18 @@ resource "aws_api_gateway_resource" "DocPath" {
 resource "aws_api_gateway_resource" "DocID" {
   rest_api_id = aws_api_gateway_rest_api.OxyApi.id
   parent_id   = aws_api_gateway_resource.DocPath.id
+  path_part   = "{id}"
+}
+
+resource "aws_api_gateway_resource" "UserPath" {
+  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
+  parent_id   = aws_api_gateway_rest_api.OxyApi.root_resource_id
+  path_part   = "users"
+}
+
+resource "aws_api_gateway_resource" "UserID" {
+  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
+  parent_id   = aws_api_gateway_resource.UserPath.id
   path_part   = "{id}"
 }
 
@@ -84,6 +92,49 @@ resource "aws_iam_role_policy_attachment" "attach-policy-ddb" {
   #default by aws 
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
+
+resource "aws_iam_role" "APIGatewayCognitoIDPListUsers" {
+  name = "APIGatewayCognitoIDPListUsersRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = ""
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      },
+    ]
+  })
+
+}
+
+resource "aws_iam_policy" "cidp_listUsers"{
+  name        = "cognito-idp_listUsers"
+  description = "Allows listUsers action on ${var.user_pool_id} user_pool"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "cognito-idp:ListUsers"
+      ],
+      "Effect": "Allow",
+      "Resource": "${var.user_pool_arn}"
+    }
+  ]
+}
+EOF
+}
+resource "aws_iam_role_policy_attachment" "attach-policy-cidp-listusers" {
+  role = aws_iam_role.APIGatewayCognitoIDPListUsers.name
+  policy_arn = aws_iam_policy.cidp_listUsers.arn
+}
+
 
 module "upload_docs_method" {
   source                 = "./uploadFile/"
