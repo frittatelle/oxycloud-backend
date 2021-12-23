@@ -88,6 +88,10 @@ resource "aws_cognito_user_pool" "users_pool" {
     email_subject        = "Your verification code"
     sms_message          = "Your verification code is {####}. "
   }
+
+  lambda_config {
+    post_confirmation = module.set_user_company.lambda_function_arn
+  }
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
@@ -169,4 +173,11 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "website",
     "zoneinfo",
   ]
+
+
+}
+
+module "set_user_company" {
+  source        = "./setUserCompany"
+  user_pool_arn = aws_cognito_user_pool.users_pool.arn
 }

@@ -111,7 +111,7 @@ resource "aws_iam_role" "APIGatewayCognitoIDPListUsers" {
 
 }
 
-resource "aws_iam_policy" "cidp_listUsers"{
+resource "aws_iam_policy" "cidp_listUsers" {
   name        = "cognito-idp_listUsers"
   description = "Allows listUsers action on ${var.user_pool_id} user_pool"
 
@@ -131,7 +131,7 @@ resource "aws_iam_policy" "cidp_listUsers"{
 EOF
 }
 resource "aws_iam_role_policy_attachment" "attach-policy-cidp-listusers" {
-  role = aws_iam_role.APIGatewayCognitoIDPListUsers.name
+  role       = aws_iam_role.APIGatewayCognitoIDPListUsers.name
   policy_arn = aws_iam_policy.cidp_listUsers.arn
 }
 
