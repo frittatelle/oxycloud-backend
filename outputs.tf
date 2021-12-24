@@ -10,10 +10,6 @@ output "CLIENT_ID" {
   value = module.authorization.client_id
 }
 
-output "IDENTITY_POOL_ID" {
-  value = module.authorization.identity_pool
-}
-
 output "BUCKET_NAME" {
   value = module.storage.bucket.bucket
 }
