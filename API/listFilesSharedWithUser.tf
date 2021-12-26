@@ -30,8 +30,11 @@ resource "aws_api_gateway_integration" "ListingDocsSharedWithUser" {
     #set($user_id = $context.authorizer.claims['cognito:username'])
     {
         "TableName":"${var.storage_table.name}",
-        "FilterExpression": "contains(shared_with, :user_id)",
-        "ExpressionAttributeValues": {":user_id": { "S": "$user_id"}},
+        "FilterExpression": "is_doomed = :doom AND contains(shared_with, :user_id)",
+        "ExpressionAttributeValues": {
+          ":user_id": { "S": "$user_id"}, 
+          ":doom":{"BOOL":"false"}
+        },
         "ReturnConsumedCapacity": "TOTAL"
     }
     EOF
