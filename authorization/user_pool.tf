@@ -115,8 +115,8 @@ resource "aws_cognito_user_pool_client" "web_client" {
   ]
   refresh_token_validity = 30
 
-  
-  id_token_validity = 5 
+
+  id_token_validity = 5
   explicit_auth_flows = [
     "ALLOW_USER_PASSWORD_AUTH",
     "ALLOW_REFRESH_TOKEN_AUTH"
@@ -181,5 +181,6 @@ module "set_user_company" {
 }
 
 module "verify_subscription_plan" {
-  source = "./verifySubscriptionPlan"
+  source        = "./verifySubscriptionPlan"
+  user_pool_arn = aws_cognito_user_pool.users_pool.arn
 }
