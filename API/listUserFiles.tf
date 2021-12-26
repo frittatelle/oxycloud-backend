@@ -86,6 +86,9 @@ resource "aws_api_gateway_integration_response" "ListingDocs" {
     "last_edit":"$it.time.S",
     "etag":"$it.eTag.S",
     "folder":"$it.folder.S",
+    "shared_with":[#foreach($u in $it.shared_with.SS) 
+        "$u"#if($foreach.hasNext),#end
+    #end],
     "name":"$it.display_name.S"
     }#if($foreach.hasNext),#end
     #end
