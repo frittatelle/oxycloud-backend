@@ -113,17 +113,14 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "phone",
     "profile",
   ]
-  callback_urls          = [var.website]
   refresh_token_validity = 30
 
-  # TODO: change token validity when deployed in prod (2 hours in dev)
-  id_token_validity = 2
+  
+  id_token_validity = 5 
   explicit_auth_flows = [
-    "ALLOW_CUSTOM_AUTH",
-    "ALLOW_REFRESH_TOKEN_AUTH",
-    "ALLOW_USER_SRP_AUTH",
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH"
   ]
-  logout_urls                   = [var.website]
   name                          = "web_client"
   prevent_user_existence_errors = "ENABLED"
   read_attributes = [
