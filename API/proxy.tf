@@ -27,14 +27,14 @@ resource "aws_api_gateway_method" "ProxyPath" {
   http_method   = "ANY"
   authorization = "NONE"
   request_parameters = {
-     "method.request.path.proxy" = true
+    "method.request.path.proxy" = true
   }
 }
 
 resource "aws_api_gateway_integration" "ProxyPath" {
   rest_api_id             = aws_api_gateway_rest_api.OxyApi.id
   resource_id             = aws_api_gateway_resource.ProxyPath.id
-  http_method             = "ANY" 
+  http_method             = "ANY"
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
   timeout_milliseconds    = 29000

@@ -19,8 +19,8 @@ module "dynamodb_table" {
 }
 
 locals {
-  table_arn = module.dynamodb_table.dynamodb_table_arn 
-  table_name = module.dynamodb_table.dynamodb_table_id 
+  table_arn        = module.dynamodb_table.dynamodb_table_arn
+  table_name       = module.dynamodb_table.dynamodb_table_id
   table_stream_arn = module.dynamodb_table.dynamodb_table_stream_arn
 }
 

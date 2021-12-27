@@ -51,10 +51,10 @@ resource "aws_api_gateway_integration" "ListingDocs" {
 }
 
 resource "aws_api_gateway_integration_response" "ListingDocs" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  resource_id = aws_api_gateway_resource.DocPath.id
-  http_method = aws_api_gateway_method.ListingDocs.http_method
-  status_code = aws_api_gateway_method_response.ListingDocs_200.status_code
+  rest_api_id      = aws_api_gateway_rest_api.OxyApi.id
+  resource_id      = aws_api_gateway_resource.DocPath.id
+  http_method      = aws_api_gateway_method.ListingDocs.http_method
+  status_code      = aws_api_gateway_method_response.ListingDocs_200.status_code
   content_handling = "CONVERT_TO_TEXT"
   response_parameters = {
     "method.response.header.Content-Type" = "integration.response.header.Content-Type"

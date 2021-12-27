@@ -34,12 +34,12 @@ locals {
     id  = var.user_pool_id
   }
   storage_bucket = {
-    arn = var.storage_bucket_arn
-    name = var.storage_bucketName 
+    arn  = var.storage_bucket_arn
+    name = var.storage_bucketName
   }
   storage_table = {
     stream_arn = var.storage_table_stream_arn
-    name = var.storage_table 
-    arn = var.storage_table_arn
+    name       = var.storage_table
+    arn        = var.storage_table_arn
   }
 }

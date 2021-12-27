@@ -37,10 +37,10 @@ resource "aws_api_gateway_integration" "GetUser" {
 }
 
 resource "aws_api_gateway_integration_response" "GetUser" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  resource_id = aws_api_gateway_resource.UserID.id
-  http_method = aws_api_gateway_method.GetUser.http_method
-  status_code = aws_api_gateway_method_response.GetUser_200.status_code
+  rest_api_id      = aws_api_gateway_rest_api.OxyApi.id
+  resource_id      = aws_api_gateway_resource.UserID.id
+  http_method      = aws_api_gateway_method.GetUser.http_method
+  status_code      = aws_api_gateway_method_response.GetUser_200.status_code
   content_handling = "CONVERT_TO_TEXT"
   response_parameters = {
     "method.response.header.Content-Type" = "integration.response.header.Content-Type"

@@ -137,10 +137,10 @@ resource "aws_iam_role_policy_attachment" "attach-policy-cidp-listusers" {
 
 
 module "upload_docs_trigger" {
-  source                 = "./uploadFile/"
-  storage_bucket_id      = var.storage_bucketName
-  storage_bucket_arn     = var.storage_bucket_arn
-  storage_table          = var.storage_table
+  source             = "./uploadFile/"
+  storage_bucket_id  = var.storage_bucketName
+  storage_bucket_arn = var.storage_bucket_arn
+  storage_table      = var.storage_table
 }
 
 module "doom_docs_lambda" {

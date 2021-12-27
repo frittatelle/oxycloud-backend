@@ -26,7 +26,7 @@ variable "authorizer" {
 
 variable "resource" {
   type = object({
-    id          = string
+    id   = string
     path = string
   })
 }
@@ -52,6 +52,6 @@ variable "request" {
   })
 }
 
-variable "http_method"{
+variable "http_method" {
   type = string
 }

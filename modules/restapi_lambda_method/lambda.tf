@@ -18,7 +18,7 @@ module "lambda_function" {
   environment_variables = var.lambda.environment_variables
   allowed_triggers = {
     ApiGatewayRule = {
-      principal  = "apigateway.amazonaws.com"                   #replace {proxy_whatever} with a *
+      principal  = "apigateway.amazonaws.com" #replace {proxy_whatever} with a *
       source_arn = "${var.apigateway.arn}/*/${var.http_method}${replace(var.resource.path, "/\\{\\w+\\}/", "*")}"
     }
   }
