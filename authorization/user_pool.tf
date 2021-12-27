@@ -170,5 +170,6 @@ module "set_user_company" {
 }
 
 module "verify_subscription_plan" {
-  source = "./verifySubscriptionPlan"
+  source        = "./verifySubscriptionPlan"
+  user_pool_arn = aws_cognito_user_pool.users_pool.arn
 }

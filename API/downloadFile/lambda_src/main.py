@@ -35,6 +35,8 @@ def lambda_handler(event, context):
             )
             if user_id not in record['Item']['shared_with']:
                 raise "not authorized"
+        if bool(record['Item']['is_doomed']):
+            raise "file doesn't exist anymore"
     except:
             return { 
                     'statusCode':400,

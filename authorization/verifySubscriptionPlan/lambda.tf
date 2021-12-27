@@ -15,5 +15,18 @@ module "lambda_function" {
   source_path = "${path.module}/lambda_src"
 
   store_on_s3 = false
+  allowed_triggers = {
+    CognitoUserPool = {
+      principal  = "cognito-idp.amazonaws.com"
+      source_arn = var.user_pool_arn
+    }
+  }
+}
 
+resource "aws_lambda_permission" "cognito_presignup_trigger" {
+  statement_id  = "AllowExecutionFromCognitoPreSignupTrigger"
+  action        = "lambda:InvokeFunction"
+  function_name = module.lambda_function.lambda_function_arn
+  principal     = "cognito-idp.amazonaws.com"
+  source_arn    = var.user_pool_arn
 }
