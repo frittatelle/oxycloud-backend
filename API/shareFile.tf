@@ -1,14 +1,14 @@
 module "shareFile"{
     source = "../modules/restapi_lambda_method"
     lambda = {
-        name                  = "share-file_"
+        name                  = "share-file"
         description           = "Share file with provided id"
         policy_arn            = aws_iam_policy.shareFile.arn
         timeout               = 30
         source_path           = "${path.module}/src/shareFile"
         environment_variables = {
             USER_STORAGE_TABLE = var.storage_table.name
-            USER_POOL_ID       = aws_api_gateway_authorizer.user_pool.id
+            USER_POOL_ID       = var.user_pool_id
         }
     }
     http_method        = "POST"
