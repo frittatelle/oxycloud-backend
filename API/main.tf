@@ -231,3 +231,14 @@ resource "aws_api_gateway_stage" "dev" {
   rest_api_id   = aws_api_gateway_rest_api.OxyApi.id
   stage_name    = "dev"
 }
+
+resource "aws_api_gateway_domain_name" "OxyApi_domain" {
+  certificate_arn = var.certificate_arn
+  domain_name     = "api.oxycloud.space"
+}
+
+resource "aws_api_gateway_base_path_mapping" "dev" {
+  api_id      = aws_api_gateway_rest_api.OxyApi.id
+  domain_name = aws_api_gateway_domain_name.OxyApi_domain.domain_name
+  stage_name  = aws_api_gateway_stage.dev.stage_name
+}

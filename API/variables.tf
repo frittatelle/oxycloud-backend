@@ -27,3 +27,7 @@ variable "region" {
 variable "storage_bucket_arn" {}
 
 variable "s3_website_endpoint" {}
+
+variable "certificate_arn" {
+  
+}

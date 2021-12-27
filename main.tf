@@ -47,6 +47,10 @@ module "database" {
   source = "./database"
 }
 
+module "certificates" {
+  source = "./certificates"
+}
+
 resource "random_string" "id" {
   length  = 6
   special = false
@@ -63,6 +67,7 @@ module "api" {
   storage_table_stream_arn = module.database.table.stream_arn
   user_pool_arn            = module.authorization.user_pool_arn
   user_pool_id             = module.authorization.user_pool
+  certificate_arn          = module.certificates.certificate_arn
   #4the workaround
   s3_website_endpoint = module.website.domain_name
 }
