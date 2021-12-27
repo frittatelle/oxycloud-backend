@@ -149,20 +149,6 @@ module "upload_docs_method" {
   parent_resource_path   = aws_api_gateway_resource.DocPath.path
 }
 
-module "download_docs_method" {
-  source                 = "./downloadFile/"
-  rest_api_execution_arn = aws_api_gateway_rest_api.OxyApi.execution_arn
-  rest_api_id            = aws_api_gateway_rest_api.OxyApi.id
-  resource_id            = aws_api_gateway_resource.DocID.id
-  parent_resource_path   = aws_api_gateway_resource.DocPath.path
-  region                 = var.region
-  storage_bucket_id      = var.storage_bucketName
-  storage_bucket_arn     = var.storage_bucket_arn
-  storage_table          = var.storage_table
-  authorizer_id          = aws_api_gateway_authorizer.user_pool.id
-}
-
-
 module "unshare_docs_method" {
   source                 = "./unshareFile/"
   rest_api_execution_arn = aws_api_gateway_rest_api.OxyApi.execution_arn
@@ -206,7 +192,7 @@ resource "aws_api_gateway_deployment" "OxyApi" {
     aws_api_gateway_integration.ProxyPath,
     aws_api_gateway_integration.IndexPath,
     module.upload_docs_method,
-    module.download_docs_method,
+    module.downloadFile,
     module.shareFile,
     module.unshare_docs_method
   ]

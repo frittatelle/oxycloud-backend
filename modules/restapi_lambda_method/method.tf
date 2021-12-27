@@ -32,7 +32,7 @@ resource "aws_api_gateway_integration_response" "lambdaMethod" {
   depends_on = [aws_api_gateway_integration.lambdaMethod]
 }
 
-resource "aws_api_gateway_method_response" "lambdaMethod_200" {
+resource "aws_api_gateway_method_response" "lambdaMethod" {
   for_each            = var.responses
   rest_api_id         = var.apigateway.id
   resource_id         = var.resource.id
