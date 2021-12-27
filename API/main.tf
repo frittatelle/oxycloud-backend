@@ -66,7 +66,7 @@ resource "aws_iam_role" "APIGatewayS3FullAccess" {
 
 resource "aws_iam_role_policy_attachment" "attach-policy" {
   role = aws_iam_role.APIGatewayS3FullAccess.name
-  #default by aws 
+  #default by aws
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
@@ -89,7 +89,7 @@ resource "aws_iam_role" "APIGatewayDynamoDBFullAccess" {
 
 resource "aws_iam_role_policy_attachment" "attach-policy-ddb" {
   role = aws_iam_role.APIGatewayDynamoDBFullAccess.name
-  #default by aws 
+  #default by aws
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
 
@@ -162,20 +162,6 @@ module "download_docs_method" {
   authorizer_id          = aws_api_gateway_authorizer.user_pool.id
 }
 
-module "share_docs_method" {
-  source                 = "./shareFile/"
-  rest_api_execution_arn = aws_api_gateway_rest_api.OxyApi.execution_arn
-  rest_api_id            = aws_api_gateway_rest_api.OxyApi.id
-  resource_id            = aws_api_gateway_resource.ShareID.id
-  parent_resource_path   = aws_api_gateway_resource.SharePath.path
-  region                 = var.region
-  storage_bucket_id      = var.storage_bucketName
-  storage_bucket_arn     = var.storage_bucket_arn
-  storage_table          = var.storage_table
-  authorizer_id          = aws_api_gateway_authorizer.user_pool.id
-  user_pool_arn          = var.user_pool_arn
-  user_pool_id           = var.user_pool_id
-}
 
 module "unshare_docs_method" {
   source                 = "./unshareFile/"
@@ -221,7 +207,7 @@ resource "aws_api_gateway_deployment" "OxyApi" {
     aws_api_gateway_integration.IndexPath,
     module.upload_docs_method,
     module.download_docs_method,
-    module.share_docs_method,
+    module.shareFile,
     module.unshare_docs_method
   ]
 }
