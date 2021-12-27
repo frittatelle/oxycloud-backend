@@ -1,7 +1,7 @@
 #https://github.com/terraform-aws-modules/terraform-aws-lambda/tree/master/examples/complete
 module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "2.22.0"
+  version = "2.28.0"
 
   function_name = var.lambda.name
   description   = var.lambda.description
