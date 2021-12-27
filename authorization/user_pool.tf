@@ -102,6 +102,9 @@ resource "aws_cognito_user_pool_domain" "main" {
 
 # aws_cognito_user_pool_client.web_client:
 resource "aws_cognito_user_pool_client" "web_client" {
+
+  callback_urls = [var.website]
+
   allowed_oauth_flows = [
     "code",
     "implicit",
