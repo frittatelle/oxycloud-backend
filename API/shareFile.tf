@@ -24,9 +24,7 @@ module "shareFile"{
         id   = aws_api_gateway_authorizer.user_pool.id
     }
 
-    resource = {
-        id  = aws_api_gateway_resource.ShareID.id
-    }
+    resource = aws_api_gateway_resource.ShareID
 
     request = {
         parameters = {

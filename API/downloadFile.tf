@@ -24,9 +24,7 @@ module "downloadFile"{
         id   = aws_api_gateway_authorizer.user_pool.id
     }
 
-    resource = {
-        id  = aws_api_gateway_resource.DocID.id
-    }
+    resource = aws_api_gateway_resource.DocID
 
     request = {
         parameters = {
