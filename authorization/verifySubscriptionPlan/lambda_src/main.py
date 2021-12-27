@@ -13,5 +13,7 @@ def lambda_handler(event, context):
 
     if not verify_subscription_plan(subscription_plan):
         raise Exception("Subscription plan is not verified")
+    else:
+        event['response']['autoConfirmUser'] = True
     
     return event

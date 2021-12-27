@@ -4,8 +4,8 @@ import boto3
 user_pool = boto3.client('cognito-idp')
 
 def lambda_handler(event, context):
-    
-    email = event['request']['userAttributes']['email'].split('@')
+
+    email = event['request']['userAttributes']['cognito:email_alias'].split('@')
     domain = email[1]
     
     res = user_pool.admin_update_user_attributes(

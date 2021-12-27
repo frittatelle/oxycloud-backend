@@ -39,3 +39,11 @@ resource "aws_iam_role_policy_attachment" "lambda_update_user_attributes" {
   role       = module.lambda_function.lambda_role_name
   policy_arn = aws_iam_policy.lambda_update_user_attributes.arn
 }
+
+resource "aws_lambda_permission" "cognito_postconfirmation_trigger" {
+  statement_id  = "AllowExecutionFromCognitoPostConfirmationTrigger"
+  action        = "lambda:InvokeFunction"
+  function_name = module.lambda_function.lambda_function_arn
+  principal     = "cognito-idp.amazonaws.com"
+  source_arn    = var.user_pool_arn
+}
