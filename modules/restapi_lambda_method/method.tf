@@ -1,5 +1,8 @@
 
 resource "aws_api_gateway_method" "lambdaMethod" {
+  depends_on = [
+    module.lambda_function
+  ]
   rest_api_id        = var.apigateway.id
   resource_id        = var.resource.id
   http_method        = var.http_method
@@ -7,7 +10,21 @@ resource "aws_api_gateway_method" "lambdaMethod" {
   authorizer_id      = var.authorizer.id
   request_parameters = var.request.parameters
 }
+
+resource "null_resource" "method-delay" {
+  provisioner "local-exec" {
+    command = "sleep 5"
+  }
+  triggers = {
+    response = var.resource.id
+  }
+}
+
 resource "aws_api_gateway_integration" "lambdaMethod" {
+  depends_on = [
+    aws_api_gateway_method.lambdaMethod,
+    null_resource.method-delay
+  ]
   rest_api_id             = var.apigateway.id
   resource_id             = var.resource.id
   http_method             = var.http_method
@@ -19,6 +36,14 @@ resource "aws_api_gateway_integration" "lambdaMethod" {
 }
 
 resource "aws_api_gateway_integration_response" "lambdaMethod" {
+  #https://github.com/hashicorp/terraform-provider-aws/issues/4001
+  depends_on = [
+    aws_api_gateway_method.lambdaMethod,
+    aws_api_gateway_integration.lambdaMethod,
+    aws_api_gateway_method_response.lambdaMethod,
+    null_resource.method-delay
+  ]
+
   for_each            = var.responses
   rest_api_id         = var.apigateway.id
   resource_id         = var.resource.id
@@ -29,10 +54,13 @@ resource "aws_api_gateway_integration_response" "lambdaMethod" {
   selection_pattern   = each.value.integration_selection_pattern
   content_handling    = each.value.integration_content_handling
 
-  depends_on = [aws_api_gateway_integration.lambdaMethod]
 }
 
 resource "aws_api_gateway_method_response" "lambdaMethod" {
+  depends_on = [
+    aws_api_gateway_method.lambdaMethod,
+    module.lambda_function
+  ]
   for_each            = var.responses
   rest_api_id         = var.apigateway.id
   resource_id         = var.resource.id
