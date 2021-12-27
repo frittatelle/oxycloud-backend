@@ -16,17 +16,15 @@ module "lambda_function" {
 
   store_on_s3           = false
   environment_variables = var.lambda.environment_variables
+  allowed_triggers = {
+    ApiGatewayRule = {
+      principal  = "apigateway.amazonaws.com"                   #replace {proxy_whatever} with a *
+      source_arn = "${var.apigateway.arn}/*/${var.http_method}${replace(var.resource.path, "/\\{\\w+\\}/", "*")}"
+    }
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = module.lambda_function.lambda_role_name
   policy_arn = var.lambda.policy_arn
-}
-
-resource "aws_lambda_permission" "allow_api_gateway_invoke_Lambda" {
-  statement_id  = "AllowApiGatewayLambdaInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = module.lambda_function.lambda_function_arn
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = var.apigateway.arn
 }

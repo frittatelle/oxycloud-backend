@@ -27,7 +27,7 @@ variable "authorizer" {
 variable "resource" {
   type = object({
     id          = string
-    # parent_path = string
+    path = string
   })
 }
 
