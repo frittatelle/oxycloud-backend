@@ -146,6 +146,7 @@ resource "aws_api_gateway_deployment" "OxyApi" {
     aws_api_gateway_method.IndexPath,
     aws_api_gateway_integration.ProxyPath,
     aws_api_gateway_integration.IndexPath,
+    module.listDocs,
     module.uploadFile,
     module.downloadFile,
     module.shareFile,
