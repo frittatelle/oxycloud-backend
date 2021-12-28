@@ -31,20 +31,6 @@ variable "resource" {
   })
 }
 
-variable "responses" {
-  type = map(object({
-    integration_parameters        = any
-    integration_templates         = any
-    integration_selection_pattern = any
-    integration_status_code       = any
-    integration_content_handling  = string
-
-    models      = any
-    parameters  = any
-    status_code = number
-  }))
-}
-
 variable "request" {
   type = object({
     parameters = any

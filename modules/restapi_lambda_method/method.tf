@@ -34,7 +34,27 @@ resource "aws_api_gateway_integration" "lambdaMethod" {
   passthrough_behavior    = "WHEN_NO_MATCH"
   uri                     = module.lambda_function.lambda_function_invoke_arn
 }
+locals {
+  responses = {
+    "ok" = {
+      integration_parameters = {}
+      integration_templates = {
+        "application/json" = ""
+      }
+      integration_selection_pattern = null
+      integration_status_code       = 200
+      integration_content_handling  = null
 
+      models = {
+        "application/json" = "Empty"
+      }
+      parameters = {
+        "method.response.header.Content-Type" = false
+      }
+      status_code = 200
+    }
+  }
+}
 resource "aws_api_gateway_integration_response" "lambdaMethod" {
   #https://github.com/hashicorp/terraform-provider-aws/issues/4001
   depends_on = [
@@ -44,7 +64,7 @@ resource "aws_api_gateway_integration_response" "lambdaMethod" {
     null_resource.method-delay
   ]
 
-  for_each            = var.responses
+  for_each            = local.responses
   rest_api_id         = var.apigateway.id
   resource_id         = var.resource.id
   http_method         = var.http_method
@@ -61,7 +81,7 @@ resource "aws_api_gateway_method_response" "lambdaMethod" {
     aws_api_gateway_method.lambdaMethod,
     module.lambda_function
   ]
-  for_each            = var.responses
+  for_each            = local.responses
   rest_api_id         = var.apigateway.id
   resource_id         = var.resource.id
   http_method         = var.http_method
