@@ -1,32 +1,61 @@
+module "renameDoc" {
+  source      = "../modules/restapi_service_method"
+  http_method = "POST"
+  service = {
+    uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/UpdateItem"
+    invoke_role = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
+    http_method = "POST"
+  }
 
-resource "aws_api_gateway_method" "RenameDoc" {
-  rest_api_id   = aws_api_gateway_rest_api.OxyApi.id
-  resource_id   = aws_api_gateway_resource.DocID.id
-  http_method   = "POST"
-  authorization = "COGNITO_USER_POOLS"
-  authorizer_id = aws_api_gateway_authorizer.user_pool.id
-  request_parameters = {
-    "method.request.querystring.filename" = true
-    "method.request.header.Content-Type"  = true
+  apigateway = {
+    arn = aws_api_gateway_rest_api.OxyApi.execution_arn
+    id  = aws_api_gateway_rest_api.OxyApi.id
+  }
+
+  authorizer = {
+    type = "COGNITO_USER_POOLS"
+    id   = aws_api_gateway_authorizer.user_pool.id
+  }
+
+  resource = aws_api_gateway_resource.DocID
+
+  request = {
+    parameters = {
+      "method.request.querystring.filename" = true
+      "method.request.header.Content-Type"  = true
+    }
+    integration_parameters = {
+      "integration.request.header.Content-Type" = "method.request.header.Content-Type"
+    }
+    timeout_ms = 29000
+    templates = {
+      "application/json" = local.request_template
+    }
+  }
+
+  responses = {
+    "ok" = {
+      integration_parameters = {
+        "method.response.header.Content-Type" = "integration.response.header.Content-Type"
+      }
+      integration_templates         = null
+      integration_selection_pattern = "2\\d{2}"
+      integration_status_code       = 200
+      integration_content_handling  = "CONVERT_TO_TEXT"
+
+      models = {
+        "application/json" = "Empty"
+      }
+      parameters = {
+        "method.response.header.Content-Type" = true
+      }
+      status_code = 200
+    }
   }
 }
-resource "aws_api_gateway_integration" "RenameDoc" {
-  rest_api_id             = aws_api_gateway_rest_api.OxyApi.id
-  resource_id             = aws_api_gateway_resource.DocID.id
-  http_method             = aws_api_gateway_method.RenameDoc.http_method
-  integration_http_method = aws_api_gateway_method.RenameDoc.http_method
-  content_handling        = "CONVERT_TO_TEXT"
-  passthrough_behavior    = "WHEN_NO_TEMPLATES"
-  type                    = "AWS"
-  timeout_milliseconds    = 29000
 
-  request_parameters = {
-    "integration.request.header.Content-Type" = "method.request.header.Content-Type"
-  }
-  credentials = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
-  uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/UpdateItem"
-  request_templates = {
-    "application/json" = <<EOF
+locals {
+  request_template = <<EOF
   #set($user_id = $context.authorizer.claims['cognito:username'])
   {
     "TableName":"${var.storage_table.name}",
@@ -39,7 +68,7 @@ resource "aws_api_gateway_integration" "RenameDoc" {
         }
     },
     "UpdateExpression": "set display_name = :filename",
-    
+
     "ExpressionAttributeValues": {
         ":filename": {"S": "$method.request.querystring.filename"},
         ":file_id": {"S": "$method.request.path.id"},
@@ -49,31 +78,4 @@ resource "aws_api_gateway_integration" "RenameDoc" {
     "ReturnValues": "ALL_NEW"
   }
     EOF
-  }
 }
-
-resource "aws_api_gateway_integration_response" "RenameDoc" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  resource_id = aws_api_gateway_resource.DocID.id
-  http_method = aws_api_gateway_method.RenameDoc.http_method
-  status_code = aws_api_gateway_method_response.RenameDoc_200.status_code
-  response_parameters = {
-    "method.response.header.Content-Type" = "integration.response.header.Content-Type"
-  }
-  depends_on = [aws_api_gateway_integration.RenameDoc]
-}
-
-resource "aws_api_gateway_method_response" "RenameDoc_200" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  resource_id = aws_api_gateway_resource.DocID.id
-  http_method = aws_api_gateway_method.RenameDoc.http_method
-  status_code = 200
-  response_parameters = {
-    "method.response.header.Content-Type" = true
-  }
-  response_models = {
-    "application/json" = "Empty"
-  }
-}
-
-
