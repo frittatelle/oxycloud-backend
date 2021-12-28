@@ -34,26 +34,6 @@ module "uploadFile" {
     timeout_ms = 29000
   }
 
-  responses = {
-    "ok" = {
-      integration_parameters = {}
-      integration_templates = {
-        "application/json" = ""
-      }
-      integration_selection_pattern = null
-      integration_status_code       = 200
-      integration_content_handling  = null
-
-      models = {
-        "application/json" = "Empty"
-      }
-      parameters = {
-        "method.response.header.Content-Type" = false
-      }
-      status_code = 200
-    }
-  }
-
   depends_on = [
     aws_api_gateway_rest_api.OxyApi
   ]
