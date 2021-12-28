@@ -1,9 +1,10 @@
 module "renameDoc" {
   source      = "../modules/restapi_service_method"
   http_method = "POST"
+  name        = "renameDoc"
   service = {
     uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/UpdateItem"
-    invoke_role = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
+    policy_arn  = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
     http_method = "POST"
   }
 

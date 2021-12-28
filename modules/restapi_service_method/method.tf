@@ -31,7 +31,7 @@ resource "aws_api_gateway_integration" "serviceMethod" {
   type                    = "AWS"
   timeout_milliseconds    = var.request.timeout_ms
 
-  credentials = var.service.invoke_role
+  credentials = aws_iam_role.role.arn
   uri         = var.service.uri
 
   request_parameters = var.request.integration_parameters
@@ -72,4 +72,27 @@ resource "aws_api_gateway_method_response" "serviceMethod" {
   status_code         = each.value.status_code
   response_parameters = each.value.parameters
   response_models     = each.value.models
+}
+
+
+resource "aws_iam_role_policy_attachment" "attach-policy" {
+  role = aws_iam_role.role.name
+  policy_arn = var.service.policy_arn
+}
+
+resource "aws_iam_role" "role" {
+  name = "APIGateway${title(var.name)}ServiceMethod"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = ""
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      },
+    ]
+  })
 }

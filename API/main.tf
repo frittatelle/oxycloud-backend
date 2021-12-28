@@ -46,30 +46,6 @@ resource "aws_api_gateway_resource" "UserID" {
   path_part   = "{id}"
 }
 
-resource "aws_iam_role" "APIGatewayS3FullAccess" {
-  name = "APIGatewayS3FullAccessRole"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = ""
-        Effect = "Allow"
-        Principal = {
-          Service = "apigateway.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      },
-    ]
-  })
-
-}
-
-resource "aws_iam_role_policy_attachment" "attach-policy" {
-  role = aws_iam_role.APIGatewayS3FullAccess.name
-  #default by aws
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-}
-
 resource "aws_iam_role" "APIGatewayDynamoDBFullAccess" {
   name = "APIGatewayDynamoDBFullAccessRole"
   assume_role_policy = jsonencode({

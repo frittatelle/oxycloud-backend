@@ -2,7 +2,7 @@
 variable "service" {
   type = object({
     uri         = string
-    invoke_role = string
+    policy_arn  = string
     http_method = string
   })
 }
@@ -52,5 +52,8 @@ variable "request" {
 }
 
 variable "http_method" {
+  type = string
+}
+variable "name" {
   type = string
 }
