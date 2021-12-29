@@ -17,29 +17,30 @@ def lambda_handler(event, context):
     file_id = event['pathParameters']['id']
     user_id = event['requestContext']['authorizer']['claims']['cognito:username']
     
-    # get share user 
+    # check if user exists in user pool
     user_pool_res = user_pool.list_users(
             UserPoolId = user_pool_id,
             Limit = 1,
             Filter = "email = \"{}\"".format(share_email)
         )
-    share_username = user_pool_res['Users'][0]['Username']
-        
-    # update share list
-    res = table.update_item(
-        Key = { 
-            'file_id':file_id,
-            'user_id':user_id
-        },
-        UpdateExpression='add shared_with :share_username',
-        ConditionExpression='file_id = :file_id AND user_id = :user_id',
-        ExpressionAttributeValues={
-            ':share_username':set([share_username]),
-            ':file_id':file_id,
-            ':user_id':user_id
-        },
-        ReturnValues='UPDATED_NEW'
-    )
+    
+    # share_username = user_pool_res['Users'][0]['Attributes'][0]['Value']
+    if len(user_pool_res['Users']) > 0:  
+        # update share list
+        res = table.update_item(
+            Key = { 
+                'file_id':file_id,
+                'user_id':user_id
+            },
+            UpdateExpression='add shared_with :share_username',
+            ConditionExpression='file_id = :file_id AND user_id = :user_id',
+            ExpressionAttributeValues={
+                ':share_username':set([share_email]),
+                ':file_id':file_id,
+                ':user_id':user_id
+            },
+            ReturnValues='UPDATED_NEW'
+        )
     
     return {
         "isBase64Encoded": "true",
