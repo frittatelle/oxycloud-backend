@@ -5,10 +5,23 @@ terraform {
       version = "~> 3.69.0"
     }
   }
+  backend "s3" {
+    # hardcoded values since it's not possible to use variables in backend module
+    bucket         = "oxycloud-terraform-state"
+    key            = "oxycloud.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "oxycloud-terraform-state-lock"
+    encrypt        = true
+  }
 }
 
 provider "aws" {
   region = var.region
+}
+
+module "tfstate_management" {
+  source = "./tfstate_management"
+
 }
 
 module "website" {
