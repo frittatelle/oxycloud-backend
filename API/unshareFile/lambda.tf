@@ -23,6 +23,9 @@ module "lambda_function" {
 resource "aws_iam_policy" "lambda_dyndb_update_item_userpool_get_user_unshare" {
   name        = "lambda_dyndb_update_item_userpool_get_user_unshare"
   description = "allows to update item from ${var.storage_table.arn} and to get user from user pool"
+  depends_on = [
+    module.lambda_function.lambda_role_name
+  ]
   policy = jsonencode(
     {
       Version = "2012-10-17"

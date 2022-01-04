@@ -19,14 +19,8 @@ provider "aws" {
   region = var.region
 }
 
-module "tfstate_management" {
-  source = "./tfstate_management"
-
-}
-
 module "website" {
-  source = "./website"
-
+  source        = "./website"
   s3_origin_id  = "s3OriginId" #not clear
   bucket_prefix = "oxy-website-"
 }

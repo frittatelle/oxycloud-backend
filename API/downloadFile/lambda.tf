@@ -23,6 +23,9 @@ module "lambda_function" {
 resource "aws_iam_policy" "lambda_dyndb_get_item" {
   name        = "lambda_dyndb_get_item"
   description = "allows to get item.path from ${var.storage_table.arn}"
+  depends_on = [
+    module.lambda_function.lambda_role_name
+  ]
   policy = jsonencode(
     {
       Version = "2012-10-17"

@@ -23,6 +23,9 @@ module "lambda_trigger" {
 resource "aws_iam_policy" "lambda_putitem_s3head" {
   name        = "lambda_putitem_s3head"
   description = "Allows to put item into ${var.storage_table.arn} and to call the HEAD method on a s3 object"
+  depends_on = [
+    module.lambda_trigger.function_name
+  ]
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
