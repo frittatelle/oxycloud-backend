@@ -45,10 +45,13 @@
 name: "Terraform CD"
 
 on:
-  workflow_dispatch
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+  push:
+    branches:
+      - dev/docs-api
 
 jobs:
   terraform:
