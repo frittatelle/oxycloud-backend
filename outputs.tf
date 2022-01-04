@@ -10,12 +10,8 @@ output "CLIENT_ID" {
   value = module.authorization.client_id
 }
 
-output "IDENTITY_POOL_ID" {
-  value = module.authorization.identity_pool
-}
-
 output "BUCKET_NAME" {
-  value = aws_s3_bucket.storage.bucket
+  value = module.storage.bucket.bucket
 }
 
 output "REGION" {
@@ -38,3 +34,8 @@ output "WEBSITE_URL" {
 output "HOSTING_BUCKET" {
   value = module.website.hosting_bucket
 }
+output "API_ENDPOINT_URL" {
+  value = module.api.endpoint_url
+}
+
+

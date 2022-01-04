@@ -5,5 +5,5 @@ output "hosting_bucket" {
 
 output "domain_name" {
   description = "The public accessible domain"
-  value       = aws_cloudfront_distribution.website.domain_name
+  value       = var.use_cdn? aws_cloudfront_distribution.website[0].domain_name : aws_s3_bucket.hosting.website_endpoint
 }

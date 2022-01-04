@@ -1,18 +1,22 @@
 # aws_cognito_user_pool.users_pool:
 resource "aws_cognito_user_pool" "users_pool" {
-  alias_attributes = [
-    "preferred_username",
-  ]
+
   auto_verified_attributes = [
+    "email",
+  ]
+  username_attributes = [
     "email",
   ]
   mfa_configuration = "OFF"
   name              = "oxygen_dev"
   tags              = {}
+  username_configuration {
+    case_sensitive = false
+  }
 
   account_recovery_setting {
     recovery_mechanism {
-      name     = "admin_only"
+      name     = "verified_email"
       priority = 1
     }
   }
@@ -53,8 +57,29 @@ resource "aws_cognito_user_pool" "users_pool" {
     }
   }
 
-  username_configuration {
-    case_sensitive = false
+  schema {
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    mutable                  = true
+    name                     = "company"
+    required                 = false
+
+    string_attribute_constraints {
+      max_length = "256"
+      min_length = "1"
+    }
+  }
+
+  schema {
+    attribute_data_type      = "Number"
+    developer_only_attribute = false
+    mutable                  = true
+    name                     = "subscription_plan"
+    required                 = false
+    number_attribute_constraints {
+      max_value = 500
+      min_value = 50
+    }
   }
 
   verification_message_template {
@@ -62,6 +87,11 @@ resource "aws_cognito_user_pool" "users_pool" {
     email_message        = "Your verification code is {####}. "
     email_subject        = "Your verification code"
     sms_message          = "Your verification code is {####}. "
+  }
+
+  lambda_config {
+    pre_sign_up       = module.verify_subscription_plan.lambda_function_arn
+    post_confirmation = module.set_user_company.lambda_function_arn
   }
 }
 
@@ -72,6 +102,9 @@ resource "aws_cognito_user_pool_domain" "main" {
 
 # aws_cognito_user_pool_client.web_client:
 resource "aws_cognito_user_pool_client" "web_client" {
+
+  callback_urls = [var.website]
+
   allowed_oauth_flows = [
     "code",
     "implicit",
@@ -81,20 +114,23 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "email",
     "openid",
     "phone",
+    "profile",
   ]
-  callback_urls = [var.website]
+  refresh_token_validity = 30
 
+
+  id_token_validity = 5
   explicit_auth_flows = [
-    "ALLOW_CUSTOM_AUTH",
-    "ALLOW_REFRESH_TOKEN_AUTH",
-    "ALLOW_USER_SRP_AUTH",
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH"
   ]
-  logout_urls                   = [var.website]
   name                          = "web_client"
   prevent_user_existence_errors = "ENABLED"
   read_attributes = [
     "address",
     "birthdate",
+    "custom:company",
+    "custom:subscription_plan",
     "email",
     "email_verified",
     "family_name",
@@ -113,7 +149,6 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "website",
     "zoneinfo",
   ]
-  refresh_token_validity = 30
   supported_identity_providers = [
     "COGNITO",
   ]
@@ -121,6 +156,8 @@ resource "aws_cognito_user_pool_client" "web_client" {
   write_attributes = [
     "address",
     "birthdate",
+    "custom:company",
+    "custom:subscription_plan",
     "email",
     "family_name",
     "gender",
@@ -137,4 +174,16 @@ resource "aws_cognito_user_pool_client" "web_client" {
     "website",
     "zoneinfo",
   ]
+
+
+}
+
+module "set_user_company" {
+  source        = "./setUserCompany"
+  user_pool_arn = aws_cognito_user_pool.users_pool.arn
+}
+
+module "verify_subscription_plan" {
+  source        = "./verifySubscriptionPlan"
+  user_pool_arn = aws_cognito_user_pool.users_pool.arn
 }
