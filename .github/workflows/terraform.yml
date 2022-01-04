@@ -49,9 +49,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-  push:
-    branches:
-      - dev/docs-api
 
 jobs:
   terraform:
