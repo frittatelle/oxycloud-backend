@@ -24,8 +24,8 @@ def lambda_handler(event, context):
             Filter = "email = \"{}\"".format(share_email)
         )
     
-    # share_username = user_pool_res['Users'][0]['Attributes'][0]['Value']
     if len(user_pool_res['Users']) > 0:  
+        share_username = user_pool_res['Users'][0]['Attributes'][0]['Value']
         # update share list
         res = table.update_item(
             Key = { 
@@ -35,7 +35,7 @@ def lambda_handler(event, context):
             UpdateExpression='add shared_with :share_username',
             ConditionExpression='file_id = :file_id AND user_id = :user_id',
             ExpressionAttributeValues={
-                ':share_username':set([share_email]),
+                ':share_username':set([share_username]),
                 ':file_id':file_id,
                 ':user_id':user_id
             },

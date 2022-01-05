@@ -23,9 +23,9 @@ def lambda_handler(event, context):
             Limit = 1,
             Filter = "email = \"{}\"".format(unshare_email)
         )
-    # unshare_username = user_pool_res['Users'][0]['Username']
-
+    
     if len(user_pool_res) > 0:    
+        unshare_username = user_pool_res['Users'][0]['Username']
         # update share list
         res = table.update_item(
             Key = { 
@@ -35,7 +35,7 @@ def lambda_handler(event, context):
             UpdateExpression='delete shared_with :unshare_username',
             ConditionExpression='file_id = :file_id AND user_id = :user_id',
             ExpressionAttributeValues={
-                ':unshare_username':set([unshare_email]),
+                ':unshare_username':set([unshare_username]),
                 ':file_id':file_id,
                 ':user_id':user_id
             },
