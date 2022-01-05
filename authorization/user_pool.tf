@@ -156,7 +156,6 @@ resource "aws_cognito_user_pool_client" "web_client" {
   write_attributes = [
     "address",
     "birthdate",
-    "custom:company",
     "custom:subscription_plan",
     "email",
     "family_name",
