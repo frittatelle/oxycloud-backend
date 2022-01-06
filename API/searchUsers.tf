@@ -5,7 +5,7 @@ resource "aws_api_gateway_method" "SearchUsers" {
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.user_pool.id
   request_parameters = {
-    "method.request.querystring.q" = true
+    "method.request.querystring.q"       = true
     "method.request.header.Content-Type" = true
   }
 
@@ -38,10 +38,10 @@ resource "aws_api_gateway_integration" "SearchUsers" {
 }
 
 resource "aws_api_gateway_integration_response" "SearchUsers" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  resource_id = aws_api_gateway_resource.UserPath.id
-  http_method = aws_api_gateway_method.SearchUsers.http_method
-  status_code = aws_api_gateway_method_response.SearchUsers_200.status_code
+  rest_api_id      = aws_api_gateway_rest_api.OxyApi.id
+  resource_id      = aws_api_gateway_resource.UserPath.id
+  http_method      = aws_api_gateway_method.SearchUsers.http_method
+  status_code      = aws_api_gateway_method_response.SearchUsers_200.status_code
   content_handling = "CONVERT_TO_TEXT"
   response_parameters = {
     "method.response.header.Content-Type" = "integration.response.header.Content-Type"
@@ -87,4 +87,16 @@ resource "aws_api_gateway_method_response" "SearchUsers_200" {
   }
 }
 
+resource "aws_api_gateway_method_response" "SearchUsers_400" {
+  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
+  resource_id = aws_api_gateway_resource.UserPath.id
+  http_method = aws_api_gateway_method.SearchUsers.http_method
+  status_code = 400
+  response_parameters = {
+    "method.response.header.Content-Type" = true
+  }
+  response_models = {
+    "application/json" = "Error"
+  }
+}
 

@@ -22,23 +22,25 @@ resource "aws_api_gateway_integration" "ShareDoc" {
   uri                     = module.lambda_function.lambda_function_invoke_arn
 }
 
-resource "aws_api_gateway_integration_response" "ShareDoc" {
-  rest_api_id         = var.rest_api_id
-  resource_id         = var.resource_id
-  http_method         = aws_api_gateway_method.ShareDoc.http_method
-  status_code         = aws_api_gateway_method_response.ShareDoc_200.status_code
-  response_parameters = {}
-  response_templates = {
-    "application/json" = ""
-  }
-  depends_on = [aws_api_gateway_integration.ShareDoc]
-}
 
 resource "aws_api_gateway_method_response" "ShareDoc_200" {
   rest_api_id = var.rest_api_id
   resource_id = var.resource_id
   http_method = aws_api_gateway_method.ShareDoc.http_method
   status_code = 200
+  response_parameters = {
+    "method.response.header.Content-Type" = false
+  }
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_method_response" "ShareDoc_400" {
+  rest_api_id = var.rest_api_id
+  resource_id = var.resource_id
+  http_method = aws_api_gateway_method.ShareDoc.http_method
+  status_code = 400
   response_parameters = {
     "method.response.header.Content-Type" = false
   }

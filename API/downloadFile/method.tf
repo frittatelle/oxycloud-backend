@@ -46,6 +46,19 @@ resource "aws_api_gateway_method_response" "DownloadDoc_200" {
   }
 }
 
+resource "aws_api_gateway_method_response" "DownloadDoc_400" {
+  rest_api_id = var.rest_api_id
+  resource_id = var.resource_id
+  http_method = aws_api_gateway_method.DownloadDoc.http_method
+  status_code = 400
+  response_parameters = {
+    "method.response.header.Content-Type" = false
+  }
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
 locals {
   download_doc_http_method = aws_api_gateway_method.DownloadDoc.http_method
 }
