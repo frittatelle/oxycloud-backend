@@ -51,7 +51,6 @@ def lambda_handler(event, context):
         Params={'Bucket': bucket, 'Key': key},
         ExpiresIn=lifetime
     )
-    print(url)
     
     return {
         'statusCode':200,
