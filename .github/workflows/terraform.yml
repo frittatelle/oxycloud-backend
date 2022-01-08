@@ -95,3 +95,49 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: terraform apply -auto-approve
+        
+      - name: Terraform output to env vars
+        run: export HOSTING_BUCKET=$(terraform output -raw HOSTING_BUCKET) &&\
+          export REGION=$(terraform output -raw REGION) &&\
+          export CLIENT_ID=$(terraform output -raw CLIENT_ID)
+              
+        
+      - name: "frontend repo: set hosting bucket"
+        uses: mmercan/actions-set-secret@v/4.0.0
+        with:
+          name: 'HOSTING_BUCKET'
+          value: ${{ env.HOSTING_BUCKET }}
+          repository: hmanzur/actions-set-secret
+          token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
+          
+      - name: "frontend repo: set region"
+        uses: mmercan/actions-set-secret@v/4.0.0
+        with:
+          name: 'REGION'
+          value: ${{ env.REGION }}
+          repository: hmanzur/actions-set-secret
+          token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
+          
+      - name: "frontend repo: set client id"
+        uses: mmercan/actions-set-secret@v/4.0.0
+        with:
+          name: 'CLIENT_ID'
+          value: ${{ env.CLIENT_ID }}
+          repository: hmanzur/actions-set-secret
+          token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
+
+      - name: "frontend repo: set aws access key id"
+        uses: mmercan/actions-set-secret@v/4.0.0
+        with:
+          name: 'AWS_ACCESS_KEY_ID'
+          value: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          repository: hmanzur/actions-set-secret
+          token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
+  
+      - name: "frontend repo: set client id"
+        uses: mmercan/actions-set-secret@v/4.0.0
+        with:
+          name: 'AWS_SECRET_ACCESS_KEY'
+          value: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          repository: hmanzur/actions-set-secret
+          token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
