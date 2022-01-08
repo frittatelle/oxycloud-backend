@@ -85,6 +85,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: terraform apply -auto-approve
         
+      - run: echo "REGION=$(terraform output -raw REGION)"
       - name: Terraform output to env vars
         run: |
           echo "REGION=$(terraform output -raw REGION)" >> $GITHUB_ENV &&\
