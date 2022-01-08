@@ -86,16 +86,17 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: terraform apply -auto-approve
-          
+
       - name: Terraform output to env vars
         run: |
           echo "REGION=$(terraform output -raw REGION)" >> $GITHUB_ENV &&\
           echo "HOSTING_BUCKET=$(terraform output -raw HOSTING_BUCKET)" >> $GITHUB_ENV &&\
+          echo "API_ENDPOINT_URL=$(terraform output -raw API_ENDPOINT_URL)" >> $GITHUB_ENV &&\
           echo "CLIENT_ID=$(terraform output -raw CLIENT_ID)" >> $GITHUB_ENV
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        
+
       - name: "frontend repo: set hosting bucket"
         uses: mmercan/actions-set-secret@v/4.0.0
         with:
@@ -103,7 +104,7 @@ jobs:
           value: ${{ env.HOSTING_BUCKET }}
           repository: ${{ secrets.FE_REPO_NAME }}
           token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
-          
+
       - name: "frontend repo: set region"
         uses: mmercan/actions-set-secret@v/4.0.0
         with:
@@ -111,7 +112,7 @@ jobs:
           value: ${{ env.REGION }}
           repository: ${{ secrets.FE_REPO_NAME }}
           token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
-          
+
       - name: "frontend repo: set client id"
         uses: mmercan/actions-set-secret@v/4.0.0
         with:
@@ -120,6 +121,15 @@ jobs:
           repository: ${{ secrets.FE_REPO_NAME }}
           token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
 
+      - name: "frontend repo: set api endpoint"
+        uses: mmercan/actions-set-secret@v/4.0.0
+        with:
+          name: 'API_ENDPOINT_URL'
+          value: ${{ env.API_ENDPOINT_URL }}
+          repository: ${{ secrets.FE_REPO_NAME }}
+          token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
+
+
       - name: "frontend repo: set aws access key id"
         uses: mmercan/actions-set-secret@v/4.0.0
         with:
@@ -127,7 +137,7 @@ jobs:
           value: ${{ secrets.AWS_ACCESS_KEY_ID }}
           repository: ${{ secrets.FE_REPO_NAME }}
           token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
-  
+
       - name: "frontend repo: set client id"
         uses: mmercan/actions-set-secret@v/4.0.0
         with:
