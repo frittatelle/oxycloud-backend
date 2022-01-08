@@ -41,7 +41,7 @@ locals {
       integration_templates = {
         "application/json" = ""
       }
-      integration_selection_pattern = null
+      integration_selection_pattern = "2\\d{2}"
       integration_status_code       = 200
       integration_content_handling  = null
 
@@ -52,6 +52,40 @@ locals {
         "method.response.header.Content-Type" = false
       }
       status_code = 200
+    }
+    "ko_user" = {
+      integration_parameters = {}
+      integration_templates = {
+        "application/json" = ""
+      }
+      integration_selection_pattern = "4\\d{2}"
+      integration_status_code       = 400
+      integration_content_handling  = null
+
+      models = {
+        "application/json" = "Empty"
+      }
+      parameters = {
+        "method.response.header.Content-Type" = false
+      }
+      status_code = 400
+    }
+    "ko_server" = {
+      integration_parameters = {}
+      integration_templates = {
+        "application/json" = ""
+      }
+      integration_selection_pattern = "5\\d{2}"
+      integration_status_code       = 500
+      integration_content_handling  = null
+
+      models = {
+        "application/json" = "Empty"
+      }
+      parameters = {
+        "method.response.header.Content-Type" = false
+      }
+      status_code = 500
     }
   }
 }
