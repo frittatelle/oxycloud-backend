@@ -32,6 +32,9 @@ module "lambda_function" {
 resource "aws_iam_policy" "lambda_delete_object" {
   name        = "lambda_delete_object"
   description = "allows S3 object deletion from lambda"
+  depends_on = [
+    module.lambda_function.lambda_role_name
+  ]
   policy = jsonencode(
     {
       Version = "2012-10-17"

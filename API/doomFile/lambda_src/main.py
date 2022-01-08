@@ -6,12 +6,20 @@ import os
 s3 = boto3.client('s3')
 bucket = os.environ['USER_STORAGE_BUCKET']
 
-# TODO: try catch block
-
 def lambda_handler(event, context):
     
     key = event['Records'][0]['dynamodb']['NewImage']['file_id']['S']
-    res = s3.delete_object(Bucket = bucket, Key = key)
+
+    try:
+        res = s3.delete_object(Bucket = bucket, Key = key)
+    except:
+        return {
+            "statusCode": 400,
+            "headers":{
+                "Content-Type":"application/json"
+            },
+            "body":json.dumps("file can\'t be deleted")
+        }
 
     return {
         'statusCode': 200,

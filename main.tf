@@ -5,6 +5,14 @@ terraform {
       version = "~> 3.69.0"
     }
   }
+  backend "s3" {
+    # hardcoded values since it's not possible to use variables in backend module
+    bucket         = "oxycloud-terraform-state"
+    key            = "oxycloud.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "oxycloud-terraform-state-lock"
+    encrypt        = true
+  }
 }
 
 provider "aws" {
@@ -12,8 +20,7 @@ provider "aws" {
 }
 
 module "website" {
-  source = "./website"
-
+  source        = "./website"
   s3_origin_id  = "s3OriginId" #not clear
   bucket_prefix = "oxy-website-"
 }
@@ -37,11 +44,6 @@ module "storage" {
   region = var.region
 }
 
-#module "lambdas" {
-#  source = "./lambdas"
-#  user_storage_table_name = module.database.table.name
-#  user_storage_table_arn = module.database.table.arn
-#}
 
 module "database" {
   source = "./database"

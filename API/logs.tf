@@ -5,8 +5,7 @@ resource "aws_api_gateway_account" "API_account" {
 }
 
 resource "aws_iam_role" "cloudwatch" {
-  name = "api_gateway_cloudwatch_global"
-
+  name               = "api_gateway_cloudwatch_global"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -25,9 +24,8 @@ EOF
 }
 
 resource "aws_iam_role_policy" "cloudwatch" {
-  name = "default"
-  role = aws_iam_role.cloudwatch.id
-
+  name   = "default"
+  role   = aws_iam_role.cloudwatch.id
   policy = <<EOF
 {
     "Version": "2012-10-17",
