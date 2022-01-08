@@ -16,14 +16,14 @@ module "lambda_function" {
 
   store_on_s3 = false
   environment_variables = {
-    USER_STORAGE_TABLE  = local.table_name 
+    USER_STORAGE_TABLE = local.table_name
   }
 
   allowed_triggers = {
     dynamodb = {
       service    = "dynamodb"
       principal  = "dynamodb.amazonaws.com"
-      source_arn =  local.table_arn
+      source_arn = local.table_arn
     }
   }
 
@@ -46,7 +46,7 @@ resource "aws_iam_policy" "lambda_propagate_to_children" {
           ]
           Effect   = "Allow"
           Resource = "${local.table_stream_arn}"
-        },  
+        },
         {
           Action = [
             "dynamodb:UpdateItem",
@@ -56,7 +56,7 @@ resource "aws_iam_policy" "lambda_propagate_to_children" {
           Resource = "${local.table_arn}"
         },
       ]
-    })
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_propagate_to_children" {
@@ -72,14 +72,14 @@ resource "aws_lambda_event_source_mapping" "propagate_to_children_dynamo_mapping
     filter {
       pattern = jsonencode({
         eventName = ["MODIFY"]
-        dynamodb  = { 
-          "OldImage" :{ 
+        dynamodb = {
+          "OldImage" : {
             "is_doomed" : { "BOOL" : [false] },
-            "is_folder" : { "BOOL" : [true] } 
+            "is_folder" : { "BOOL" : [true] }
           },
-          "NewImage" :{ 
+          "NewImage" : {
             "is_doomed" : { "BOOL" : [true] },
-            "is_folder" : { "BOOL" : [true] } 
+            "is_folder" : { "BOOL" : [true] }
           },
         }
       })
@@ -87,14 +87,14 @@ resource "aws_lambda_event_source_mapping" "propagate_to_children_dynamo_mapping
     filter {
       pattern = jsonencode({
         eventName = ["MODIFY"]
-        dynamodb  = { 
-          "OldImage" :{ 
+        dynamodb = {
+          "OldImage" : {
             "is_deleted" : { "BOOL" : [false] },
-            "is_folder" : { "BOOL" : [true] } 
+            "is_folder" : { "BOOL" : [true] }
           },
-          "NewImage" :{ 
+          "NewImage" : {
             "is_deleted" : { "BOOL" : [true] },
-            "is_folder" : { "BOOL" : [true] } 
+            "is_folder" : { "BOOL" : [true] }
           },
         }
       })
@@ -102,14 +102,14 @@ resource "aws_lambda_event_source_mapping" "propagate_to_children_dynamo_mapping
     filter {
       pattern = jsonencode({
         eventName = ["MODIFY"]
-        dynamodb  = { 
-          "OldImage" :{ 
+        dynamodb = {
+          "OldImage" : {
             "is_deleted" : { "BOOL" : [true] },
-            "is_folder" : { "BOOL" : [true] } 
+            "is_folder" : { "BOOL" : [true] }
           },
-          "NewImage" :{ 
+          "NewImage" : {
             "is_deleted" : { "BOOL" : [false] },
-            "is_folder" : { "BOOL" : [true] } 
+            "is_folder" : { "BOOL" : [true] }
           },
         }
       })

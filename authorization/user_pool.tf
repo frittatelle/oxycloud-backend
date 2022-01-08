@@ -103,21 +103,7 @@ resource "aws_cognito_user_pool_domain" "main" {
 # aws_cognito_user_pool_client.web_client:
 resource "aws_cognito_user_pool_client" "web_client" {
 
-  callback_urls = [var.website]
-
-  allowed_oauth_flows = [
-    "code",
-    "implicit",
-  ]
-  allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_scopes = [
-    "email",
-    "openid",
-    "phone",
-    "profile",
-  ]
   refresh_token_validity = 30
-
 
   id_token_validity = 5
   explicit_auth_flows = [

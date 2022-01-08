@@ -2,7 +2,7 @@
 
 resource "aws_cloudfront_origin_access_identity" "website" {
   comment = "Why we even need this?"
-  count = var.use_cdn ? 1:0
+  count   = var.use_cdn ? 1 : 0
 }
 
 resource "aws_cloudfront_distribution" "website" {
