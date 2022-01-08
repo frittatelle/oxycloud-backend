@@ -96,13 +96,18 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: terraform apply -auto-approve
         
-      - run: terraform output -raw REGION
+      - run: terraform output -raw REGION        
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - run: terraform output -raw HOSTING_BUCKET
       - run: terraform output -raw CLIENT_ID
       
       - name: Terraform output to env vars
-        run: REGION=$(terraform output -raw REGION) && HOSTING_BUCKET=$(terraform output -raw HOSTING_BUCKET) && CLIENT_ID=$(terraform output -raw CLIENT_ID) && return 0
-              
+        run: REGION=$(terraform output -raw REGION) && HOSTING_BUCKET=$(terraform output -raw HOSTING_BUCKET) && CLIENT_ID=$(terraform output -raw CLIENT_ID) 
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         
       - name: "frontend repo: set hosting bucket"
         uses: mmercan/actions-set-secret@v/4.0.0
