@@ -16,20 +16,20 @@ def lambda_handler(event, context):
     unshare_email = event['queryStringParameters']['unshare_email']
     file_id = event['pathParameters']['id']
     user_id = event['requestContext']['authorizer']['claims']['cognito:username']
-    
-    # check unshare user exists in user pool 
+
+    # check unshare user exists in user pool
     user_pool_res = user_pool.list_users(
             UserPoolId = user_pool_id,
             Limit = 1,
             Filter = "email = \"{}\"".format(unshare_email)
         )
-    
-   if user_pool_res['Users'] != []:   
+
+    if len(user_pool_res['Users']) == 1:
         unshare_username = user_pool_res['Users'][0]['Username']
         # update share list
         try:
             res = table.update_item(
-                Key = { 
+                Key = {
                     'file_id':file_id,
                     'user_id':user_id
                 },
