@@ -46,72 +46,6 @@ resource "aws_api_gateway_resource" "UserID" {
   path_part   = "{id}"
 }
 
-resource "aws_iam_role" "APIGatewayDynamoDBFullAccess" {
-  name = "APIGatewayDynamoDBFullAccessRole"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = ""
-        Effect = "Allow"
-        Principal = {
-          Service = "apigateway.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      },
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "attach-policy-ddb" {
-  role = aws_iam_role.APIGatewayDynamoDBFullAccess.name
-  #default by aws
-  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
-}
-
-resource "aws_iam_role" "APIGatewayCognitoIDPListUsers" {
-  name = "APIGatewayCognitoIDPListUsersRole"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = ""
-        Effect = "Allow"
-        Principal = {
-          Service = "apigateway.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      },
-    ]
-  })
-
-}
-
-resource "aws_iam_policy" "cidp_listUsers" {
-  name        = "cognito-idp_listUsers"
-  description = "Allows listUsers action on ${var.user_pool_id} user_pool"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "cognito-idp:ListUsers"
-      ],
-      "Effect": "Allow",
-      "Resource": "${var.user_pool_arn}"
-    }
-  ]
-}
-EOF
-}
-resource "aws_iam_role_policy_attachment" "attach-policy-cidp-listusers" {
-  role       = aws_iam_role.APIGatewayCognitoIDPListUsers.name
-  policy_arn = aws_iam_policy.cidp_listUsers.arn
-}
-
-
 module "upload_docs_trigger" {
   source             = "./uploadFile/"
   storage_bucket_id  = var.storage_bucketName
@@ -146,6 +80,10 @@ resource "aws_api_gateway_deployment" "OxyApi" {
     aws_api_gateway_method.IndexPath,
     aws_api_gateway_integration.ProxyPath,
     aws_api_gateway_integration.IndexPath,
+    module.listShared,
+    module.getUser,
+    module.searchUsers,
+    module.deleteDoc,
     module.listDocs,
     module.uploadFile,
     module.downloadFile,

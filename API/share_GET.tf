@@ -1,57 +1,73 @@
-resource "aws_api_gateway_method" "ListingDocsSharedWithUser" {
-  rest_api_id   = aws_api_gateway_rest_api.OxyApi.id
-  resource_id   = aws_api_gateway_resource.SharePath.id
-  http_method   = "GET"
-  authorization = "COGNITO_USER_POOLS"
-  authorizer_id = aws_api_gateway_authorizer.user_pool.id
-  request_parameters = {
-    "method.request.header.Content-Type" = true
+module "listShared" {
+  source      = "../modules/restapi_service_method"
+  http_method = "GET"
+  name        = "listShared"
+  service = {
+    uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/Scan"
+    policy_arn  = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+    http_method = "POST"
   }
 
-}
-
-resource "aws_api_gateway_integration" "ListingDocsSharedWithUser" {
-  rest_api_id             = aws_api_gateway_rest_api.OxyApi.id
-  resource_id             = aws_api_gateway_resource.SharePath.id
-  http_method             = aws_api_gateway_method.ListingDocsSharedWithUser.http_method
-  integration_http_method = "POST"
-  content_handling        = "CONVERT_TO_TEXT"
-  passthrough_behavior    = "WHEN_NO_TEMPLATES"
-  type                    = "AWS"
-  timeout_milliseconds    = 29000
-
-  request_parameters = {
-    "integration.request.header.Content-Type" = "method.request.header.Content-Type"
+  apigateway = {
+    arn = aws_api_gateway_rest_api.OxyApi.execution_arn
+    id  = aws_api_gateway_rest_api.OxyApi.id
   }
-  credentials = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
-  uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/Scan"
-  request_templates = {
-    "application/json" = <<EOF
+
+  authorizer = {
+    type = "COGNITO_USER_POOLS"
+    id   = aws_api_gateway_authorizer.user_pool.id
+  }
+
+  resource = aws_api_gateway_resource.SharePath
+
+  request = {
+    parameters = {
+      "method.request.header.Content-Type" = true
+    }
+    integration_parameters = {
+      "integration.request.header.Content-Type" = "method.request.header.Content-Type"
+    }
+    timeout_ms = 29000
+    templates = {
+      "application/json" =  <<EOF
     #set($user_id = $context.authorizer.claims['cognito:username'])
     {
         "TableName":"${var.storage_table.name}",
         "FilterExpression": "is_doomed = :doom AND contains(shared_with, :user_id)",
         "ExpressionAttributeValues": {
-          ":user_id": { "S": "$user_id"}, 
+          ":user_id": { "S": "$user_id"},
           ":doom":{"BOOL":"false"}
         },
         "ReturnConsumedCapacity": "TOTAL"
     }
     EOF
   }
+  }
+  responses = {
+    "ok" = {
+      integration_parameters = {
+        "method.response.header.Content-Type" = "integration.response.header.Content-Type"
+      }
+      integration_templates  = {
+        "application/json"= local.listshared_response_template
+      }
+      integration_selection_pattern = "2\\d{2}"
+      integration_status_code       = 200
+      integration_content_handling  = "CONVERT_TO_TEXT"
+
+      models = {
+        "application/json" = "Empty"
+      }
+      parameters = {
+        "method.response.header.Content-Type" = true
+      }
+      status_code = 200
+    }
+  }
 }
 
-resource "aws_api_gateway_integration_response" "ListingDocsSharedWithUser" {
-  rest_api_id      = aws_api_gateway_rest_api.OxyApi.id
-  resource_id      = aws_api_gateway_resource.SharePath.id
-  http_method      = aws_api_gateway_method.ListingDocsSharedWithUser.http_method
-  status_code      = aws_api_gateway_method_response.ListingDocsSharedWithUser_200.status_code
-  content_handling = "CONVERT_TO_TEXT"
-  response_parameters = {
-    "method.response.header.Content-Type" = "integration.response.header.Content-Type"
-  }
-  response_templates = {
-    "application/json" = <<EOF
+locals {
+  listshared_response_template = <<EOF
     #set($inputRoot = $util.parseJson($util.base64Decode($input.body)))
     {
        "files": [
@@ -69,21 +85,4 @@ resource "aws_api_gateway_integration_response" "ListingDocsSharedWithUser" {
       "folders":[]
     }
     EOF
-  }
-  depends_on = [aws_api_gateway_integration.ListingDocsSharedWithUser]
 }
-
-resource "aws_api_gateway_method_response" "ListingDocsSharedWithUser_200" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  resource_id = aws_api_gateway_resource.SharePath.id
-  http_method = aws_api_gateway_method.ListingDocsSharedWithUser.http_method
-  status_code = 200
-  response_parameters = {
-    "method.response.header.Content-Type" = true
-  }
-  response_models = {
-    "application/json" = "Empty"
-  }
-}
-
-

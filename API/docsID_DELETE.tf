@@ -1,33 +1,62 @@
+module "deleteDoc" {
+  source      = "../modules/restapi_service_method"
+  http_method = "DELETE"
+  name        = "deleteDoc"
+  service = {
+    uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/UpdateItem"
+    policy_arn  = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+    http_method = "POST"
+  }
 
-resource "aws_api_gateway_method" "DeleteDoc" {
-  rest_api_id   = aws_api_gateway_rest_api.OxyApi.id
-  resource_id   = aws_api_gateway_resource.DocID.id
-  http_method   = "DELETE"
-  authorization = "COGNITO_USER_POOLS"
-  authorizer_id = aws_api_gateway_authorizer.user_pool.id
-  request_parameters = {
-    "method.request.querystring.delete"  = false
-    "method.request.querystring.doom"    = false
-    "method.request.header.Content-Type" = true
+  apigateway = {
+    arn = aws_api_gateway_rest_api.OxyApi.execution_arn
+    id  = aws_api_gateway_rest_api.OxyApi.id
+  }
+
+  authorizer = {
+    type = "COGNITO_USER_POOLS"
+    id   = aws_api_gateway_authorizer.user_pool.id
+  }
+
+  resource = aws_api_gateway_resource.DocID
+
+  request = {
+    parameters = {
+      "method.request.querystring.delete"  = false
+      "method.request.querystring.doom"    = false
+      "method.request.header.Content-Type" = true
+    }
+    integration_parameters = {
+      "integration.request.header.Content-Type" = "method.request.header.Content-Type"
+    }
+    timeout_ms = 29000
+    templates = {
+      "application/json" = local.deldoc_request_template
+    }
+  }
+  responses = {
+    "ok" = {
+      integration_parameters = {
+        "method.response.header.Content-Type" = "integration.response.header.Content-Type"
+      }
+      integration_templates         = null
+      integration_selection_pattern = "2\\d{2}"
+      integration_status_code       = 200
+      integration_content_handling  = "CONVERT_TO_TEXT"
+
+      models = {
+        "application/json" = "Empty"
+      }
+      parameters = {
+        "method.response.header.Content-Type" = true
+      }
+      status_code = 200
+    }
   }
 }
-resource "aws_api_gateway_integration" "DeleteDoc" {
-  rest_api_id             = aws_api_gateway_rest_api.OxyApi.id
-  resource_id             = aws_api_gateway_resource.DocID.id
-  http_method             = aws_api_gateway_method.DeleteDoc.http_method
-  integration_http_method = "POST"
-  content_handling        = "CONVERT_TO_TEXT"
-  passthrough_behavior    = "WHEN_NO_TEMPLATES"
-  type                    = "AWS"
-  timeout_milliseconds    = 29000
 
-  request_parameters = {
-    "integration.request.header.Content-Type" = "method.request.header.Content-Type"
-  }
-  credentials = aws_iam_role.APIGatewayDynamoDBFullAccess.arn
-  uri         = "arn:aws:apigateway:${var.region}:dynamodb:action/UpdateItem"
-  request_templates = {
-    "application/json" = <<EOF
+locals {
+  deldoc_request_template =  <<EOF
   #set($doom = $method.request.querystring.doom)
   #if(!$doom)
     #set($doom = false)
@@ -59,29 +88,4 @@ resource "aws_api_gateway_integration" "DeleteDoc" {
     "ReturnValues": "ALL_NEW"
   }
     EOF
-  }
-}
-
-resource "aws_api_gateway_integration_response" "DeleteDoc" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  resource_id = aws_api_gateway_resource.DocID.id
-  http_method = aws_api_gateway_method.DeleteDoc.http_method
-  status_code = aws_api_gateway_method_response.DeleteDoc_200.status_code
-  response_parameters = {
-    "method.response.header.Content-Type" = "integration.response.header.Content-Type"
-  }
-  depends_on = [aws_api_gateway_integration.DeleteDoc]
-}
-
-resource "aws_api_gateway_method_response" "DeleteDoc_200" {
-  rest_api_id = aws_api_gateway_rest_api.OxyApi.id
-  resource_id = aws_api_gateway_resource.DocID.id
-  http_method = aws_api_gateway_method.DeleteDoc.http_method
-  status_code = 200
-  response_parameters = {
-    "method.response.header.Content-Type" = true
-  }
-  response_models = {
-    "application/json" = "Empty"
-  }
 }
