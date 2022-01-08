@@ -97,9 +97,9 @@ jobs:
         run: terraform apply -auto-approve
         
       - name: Terraform output to env vars
-        run: export HOSTING_BUCKET=$(terraform output -raw HOSTING_BUCKET) &&\
-          export REGION=$(terraform output -raw REGION) &&\
-          export CLIENT_ID=$(terraform output -raw CLIENT_ID)
+        run: HOSTING_BUCKET=$(terraform output -raw HOSTING_BUCKET) &&\
+          REGION=$(terraform output -raw REGION) &&\
+          CLIENT_ID=$(terraform output -raw CLIENT_ID)
               
         
       - name: "frontend repo: set hosting bucket"
@@ -107,7 +107,7 @@ jobs:
         with:
           name: 'HOSTING_BUCKET'
           value: ${{ env.HOSTING_BUCKET }}
-          repository: hmanzur/actions-set-secret
+          repository: ${{ secrets.FE_REPO_NAME }}
           token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
           
       - name: "frontend repo: set region"
@@ -115,7 +115,7 @@ jobs:
         with:
           name: 'REGION'
           value: ${{ env.REGION }}
-          repository: hmanzur/actions-set-secret
+          repository: ${{ secrets.FE_REPO_NAME }}
           token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
           
       - name: "frontend repo: set client id"
@@ -123,7 +123,7 @@ jobs:
         with:
           name: 'CLIENT_ID'
           value: ${{ env.CLIENT_ID }}
-          repository: hmanzur/actions-set-secret
+          repository: ${{ secrets.FE_REPO_NAME }}
           token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
 
       - name: "frontend repo: set aws access key id"
@@ -131,7 +131,7 @@ jobs:
         with:
           name: 'AWS_ACCESS_KEY_ID'
           value: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          repository: hmanzur/actions-set-secret
+          repository: ${{ secrets.FE_REPO_NAME }}
           token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
   
       - name: "frontend repo: set client id"
@@ -139,5 +139,5 @@ jobs:
         with:
           name: 'AWS_SECRET_ACCESS_KEY'
           value: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          repository: hmanzur/actions-set-secret
+          repository: ${{ secrets.FE_REPO_NAME }}
           token: ${{ secrets.FE_REPO_ACCESS_TOKEN }}
