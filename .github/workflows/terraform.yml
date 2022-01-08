@@ -97,9 +97,7 @@ jobs:
         run: terraform apply -auto-approve
         
       - name: Terraform output to env vars
-        run: HOSTING_BUCKET=$(terraform output -raw HOSTING_BUCKET) &&\
-          REGION=$(terraform output -raw REGION) &&\
-          CLIENT_ID=$(terraform output -raw CLIENT_ID)
+        run: CLIENT_ID=$(terraform output -raw CLIENT_ID) && HOSTING_BUCKET=$(terraform output -raw HOSTING_BUCKET) && CLIENT_ID=$(terraform output -raw CLIENT_ID)
               
         
       - name: "frontend repo: set hosting bucket"
