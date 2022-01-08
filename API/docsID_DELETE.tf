@@ -56,7 +56,7 @@ module "deleteDoc" {
 }
 
 locals {
-  deldoc_request_template =  <<EOF
+  deldoc_request_template = <<EOF
   #set($doom = $method.request.querystring.doom)
   #if(!$doom)
     #set($doom = false)

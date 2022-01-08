@@ -29,22 +29,22 @@ module "getUser" {
     }
     timeout_ms = 29000
     templates = {
-      "application/json" =  <<EOF
+      "application/json" = <<EOF
         #set($id = $method.request.path.id)
         {
             "UserPoolId": "${var.user_pool_id}",
             "Filter": "sub=\"$id\""
         }
         EOF
-  }
+    }
   }
   responses = {
     "ok" = {
       integration_parameters = {
         "method.response.header.Content-Type" = "integration.response.header.Content-Type"
       }
-      integration_templates  = {
-        "application/json"= local.getuser_response_template
+      integration_templates = {
+        "application/json" = local.getuser_response_template
       }
       integration_selection_pattern = "2\\d{2}"
       integration_status_code       = 200
@@ -62,7 +62,7 @@ module "getUser" {
 }
 
 locals {
-  getuser_response_template =  <<EOF
+  getuser_response_template = <<EOF
 #set($inputRoot = $util.parseJson($util.base64Decode($input.body)))
 ##set($inputRoot = $util.parseJson($input.body))
 #set($attrMap = {"sub":"id","email":"email"})

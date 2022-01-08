@@ -17,7 +17,7 @@ resource "null_resource" "method-delay" {
 }
 
 resource "aws_api_gateway_integration" "serviceMethod" {
-    depends_on = [
+  depends_on = [
     aws_api_gateway_method.serviceMethod,
     null_resource.method-delay
   ]
@@ -47,7 +47,7 @@ resource "aws_api_gateway_integration_response" "serviceMethod" {
     null_resource.method-delay
   ]
 
-  for_each            = var.responses
+  for_each = var.responses
 
   rest_api_id         = var.apigateway.id
   resource_id         = var.resource.id
@@ -64,7 +64,7 @@ resource "aws_api_gateway_method_response" "serviceMethod" {
     aws_api_gateway_method.serviceMethod
   ]
 
-  for_each            = var.responses
+  for_each = var.responses
 
   rest_api_id         = var.apigateway.id
   resource_id         = var.resource.id
@@ -76,7 +76,7 @@ resource "aws_api_gateway_method_response" "serviceMethod" {
 
 
 resource "aws_iam_role_policy_attachment" "attach-policy" {
-  role = aws_iam_role.role.name
+  role       = aws_iam_role.role.name
   policy_arn = var.service.policy_arn
 }
 

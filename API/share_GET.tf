@@ -29,7 +29,7 @@ module "listShared" {
     }
     timeout_ms = 29000
     templates = {
-      "application/json" =  <<EOF
+      "application/json" = <<EOF
     #set($user_id = $context.authorizer.claims['cognito:username'])
     {
         "TableName":"${var.storage_table.name}",
@@ -41,15 +41,15 @@ module "listShared" {
         "ReturnConsumedCapacity": "TOTAL"
     }
     EOF
-  }
+    }
   }
   responses = {
     "ok" = {
       integration_parameters = {
         "method.response.header.Content-Type" = "integration.response.header.Content-Type"
       }
-      integration_templates  = {
-        "application/json"= local.listshared_response_template
+      integration_templates = {
+        "application/json" = local.listshared_response_template
       }
       integration_selection_pattern = "2\\d{2}"
       integration_status_code       = 200

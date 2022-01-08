@@ -23,7 +23,7 @@ module "listDocs" {
   request = {
     parameters = {
       "method.request.querystring.deleted" = true
-      "method.request.header.Content-Type"  = true
+      "method.request.header.Content-Type" = true
     }
     integration_parameters = {
       "integration.request.header.Content-Type" = "method.request.header.Content-Type"
@@ -39,7 +39,7 @@ module "listDocs" {
       integration_parameters = {
         "method.response.header.Content-Type" = "integration.response.header.Content-Type"
       }
-      integration_templates         = {
+      integration_templates = {
         "application/json" = local.docs_GET_ok_response_template
       }
       integration_selection_pattern = "2\\d{2}"
