@@ -45,7 +45,7 @@ module "searchUsers" {
         "method.response.header.Content-Type" = "integration.response.header.Content-Type"
       }
       integration_templates = {
-        "application/json" = local.getuser_response_template
+        "application/json" = local.searchusers_response_template
       }
       integration_selection_pattern = "2\\d{2}"
       integration_status_code       = 200
