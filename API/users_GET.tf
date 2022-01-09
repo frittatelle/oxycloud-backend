@@ -31,10 +31,10 @@ module "searchUsers" {
     timeout_ms = 29000
     templates = {
       "application/json" = <<EOF
-        #set($id = $method.request.path.id)
+        #set($id = $method.request.querystring.q)
         {
             "UserPoolId": "${var.user_pool_id}",
-            "Filter": "sub=\"$id\""
+            "Filter": "email^=\"$q\""
         }
         EOF
     }
