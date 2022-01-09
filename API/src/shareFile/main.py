@@ -22,7 +22,7 @@ def lambda_handler(event, context):
             Filter = "email = \"{}\"".format(share_email)
         )
     
-    if user_pool_res['Users'] != []:  
+    if len(user_pool_res['Users']) == 1:  
         share_username = user_pool_res['Users'][0]['Attributes'][0]['Value']
         # update share list
         try:

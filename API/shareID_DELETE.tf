@@ -3,7 +3,7 @@ module "unshareFile" {
   lambda = {
     name        = "unshare-file"
     description = "Unshare file with provided id"
-    policy_arn  = aws_iam_policy.downloadFile.arn
+    policy_arn  = aws_iam_policy.unshareFile.arn
     timeout     = 30
     source_path = "${path.module}/src/unshareFile"
     environment_variables = {
