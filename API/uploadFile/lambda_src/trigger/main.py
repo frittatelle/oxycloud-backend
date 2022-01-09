@@ -30,7 +30,7 @@ def lambda_handler(event, context):
             Item={
                 'file_id': file_id,
                 'user_id': user,
-                'display_name': display_name, #is full path necessary?
+                'display_name': display_name,
                 'size': size,
                 'eTag': eTag,
                 'time': time,
@@ -42,12 +42,8 @@ def lambda_handler(event, context):
         )
         #update used storage
         users_table.update_item(
-            Key={
-                'user_id': user
-            },
+            Key={ 'user_id': user },
             UpdateExpression="set used_space = used_space + :size",
-            ExpressionAttributeValues={
-                ':size': size,
-            },
+            ExpressionAttributeValues={ ':size': size },
             ReturnValues="UPDATED_NEW"
         )

@@ -17,6 +17,7 @@ module "lambda_trigger" {
   store_on_s3 = false
   environment_variables = {
     USER_STORAGE_TABLE  = var.storage_table.name
+    USERS_TABLE  = var.users_table.name
     USER_STORAGE_BUCKET = var.storage_bucket_id
   }
 }
