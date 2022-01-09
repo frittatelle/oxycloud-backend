@@ -61,7 +61,7 @@ module "listDocs" {
       integration_templates = null
       integration_selection_pattern = "4\\d{2}"
       integration_status_code       = 400
-      integration_content_handling  = "CONVERT_TO_TEXT"
+      integration_content_handling  = null
 
       models = {
         "application/json" = "Error"
@@ -79,7 +79,7 @@ module "listDocs" {
         integration_templates = null
         integration_selection_pattern = "5\\d{2}"
         integration_status_code       = 500
-        integration_content_handling  = "CONVERT_TO_TEXT"
+        integration_content_handling  = null
 
         models = {
           "application/json" = "Error"
