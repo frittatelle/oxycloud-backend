@@ -6,24 +6,24 @@ import os
 s3 = boto3.client('s3')
 bucket = os.environ['USER_STORAGE_BUCKET']
 
+dynamodb = boto3.resource('dynamodb')
+users_table = dynamodb.Table(os.environ['USERS_TABLE'])
+
 def lambda_handler(event, context):
-    
-    key = event['Records'][0]['dynamodb']['NewImage']['file_id']['S']
+    for record in event['Records']:
+        record = record['dynamodb']['NewImage']
+        key = record['file_id']['S']
+        user = record['user_id']['S']
+        size = int(record['size']['N'])
 
-    try:
-        res = s3.delete_object(Bucket = bucket, Key = key)
-    except:
-        return {
-            "statusCode": 400,
-            "headers":{
-                "Content-Type":"application/json"
-            },
-            "body":json.dumps({"message":"file can\'t be deleted"})
-        }
-
-    return {
-        'statusCode': 200,
-        'body': json.dumps(f'{key} deleted from S3 bucket')
-    }
-
-
+        try:
+            res = s3.delete_object(Bucket = bucket, Key = key)
+        except:
+            print(f"Error permanent deleting {key} on {bucket}")
+        #update used storage
+        users_table.update_item(
+            Key={ 'user_id': user },
+            UpdateExpression="set used_space = used_space - :size",
+            ExpressionAttributeValues={ ':size': size },
+            ReturnValues="UPDATED_NEW"
+        )

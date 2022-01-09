@@ -62,6 +62,7 @@ module "doom_docs_lambda" {
   storage_table            = var.storage_table
   storage_table_arn        = var.storage_table_arn
   storage_table_stream_arn = var.storage_table_stream_arn
+  users_table              = var.users_table
 }
 
 resource "aws_api_gateway_deployment" "OxyApi" {
