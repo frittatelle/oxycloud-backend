@@ -37,6 +37,7 @@ module "authorization" {
   region           = var.region
   website          = local.website
   user_pool_domain = local.user_pool_domain
+  users_table      = module.database.users_table
 }
 
 module "storage" {
@@ -60,11 +61,12 @@ module "api" {
   region                   = var.region
   storage_bucketName       = module.storage.bucket.id
   storage_bucket_arn       = module.storage.bucket.arn
-  storage_table            = module.database.table
-  storage_table_arn        = module.database.table.arn
-  storage_table_stream_arn = module.database.table.stream_arn
+  storage_table            = module.database.files_table
+  storage_table_arn        = module.database.files_table.arn
+  storage_table_stream_arn = module.database.files_table.stream_arn
   user_pool_arn            = module.authorization.user_pool_arn
   user_pool_id             = module.authorization.user_pool
+  users_table              = module.database.users_table
   #4the workaround
   s3_website_endpoint = module.website.domain_name
 }

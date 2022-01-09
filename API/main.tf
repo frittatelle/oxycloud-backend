@@ -51,6 +51,7 @@ module "upload_docs_trigger" {
   storage_bucket_id  = var.storage_bucketName
   storage_bucket_arn = var.storage_bucket_arn
   storage_table      = var.storage_table
+  users_table        = var.users_table
 }
 
 module "doom_docs_lambda" {
@@ -61,6 +62,7 @@ module "doom_docs_lambda" {
   storage_table            = var.storage_table
   storage_table_arn        = var.storage_table_arn
   storage_table_stream_arn = var.storage_table_stream_arn
+  users_table              = var.users_table
 }
 
 resource "aws_api_gateway_deployment" "OxyApi" {
