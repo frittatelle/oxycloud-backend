@@ -27,15 +27,9 @@ locals {
 
 module "users_table" {
   source = "terraform-aws-modules/dynamodb-table/aws"
-
   name             = "users"
   hash_key         = "user_id"
-  range_key        = "company"
   attributes = [
-    {
-      name = "company"
-      type = "S"
-    },
     {
       name = "user_id"
       type = "S"
