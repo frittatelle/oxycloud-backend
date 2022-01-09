@@ -149,7 +149,7 @@ jobs:
       - name: "Trigger frontend deploy"
         run: |
           curl -X POST -H "Accept: application/vnd.github.v3+json" \
-            -H "Bearer: ${{ secrets.FE_REPO_ACCESS_TOKEN }}" \
+            -H "Authorization: Bearer ${{ secrets.FE_REPO_ACCESS_TOKEN }}" \
             -H "Content-Type: application/json" \
             https://api.github.com/repos/${{ secrets.FE_REPO_NAME }}/dispatches \
             -d '{"event_type": "deploy_it"}'
