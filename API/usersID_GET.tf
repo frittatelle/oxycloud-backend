@@ -3,8 +3,8 @@ module "getUser" {
   http_method = "GET"
   name        = "getUser"
   service = {
-    uri         = "arn:aws:apigateway:${var.region}:cognito-idp:action/ListUsers"
-    policy_arn  = aws_iam_policy.getUser_listUsers.arn
+    uri         = "arn:aws:apigateway:${var.region}:cognito-idp:action/AdminGetUser"
+    policy_arn  = aws_iam_policy.getUser_AdminGetUser.arn
     http_method = "POST"
   }
 
@@ -33,7 +33,7 @@ module "getUser" {
         #set($id = $method.request.path.id)
         {
             "UserPoolId": "${var.user_pool_id}",
-            "Filter": "sub=\"$id\""
+            "Username": "$id"
         }
         EOF
     }
@@ -48,7 +48,7 @@ module "getUser" {
       }
       integration_selection_pattern = "2\\d{2}"
       integration_status_code       = 200
-      integration_content_handling  = null
+      integration_content_handling  = "CONVERT_TO_TEXT"
 
       models = {
         "application/json" = "Empty"
@@ -98,33 +98,29 @@ module "getUser" {
 
 locals {
   getuser_response_template = <<EOF
-#set($inputRoot = $util.parseJson($util.base64Decode($input.body)))
-##set($inputRoot = $util.parseJson($input.body))
+#set($u = $util.parseJson($util.base64Decode($input.body)))
+##set($u = $util.parseJson($input.body))
 #set($attrMap = {"sub":"id","email":"email"})
-#set($users=[])
 ##select and rename attribute for confirmed and enabled users
-#foreach($u in $inputRoot.Users)
-    #if($u.Enabled && $u.UserStatus.equals("CONFIRMED"))
-        #set($tmp = {})
-        #foreach($attr in $u.Attributes)
-            #if($attrMap.containsKey($attr.Name))
-                #set($tmp[$attrMap[$attr.Name]] = $attr.Value)
-            #end
+#set($user = {})
+#if($u.Enabled && $u.UserStatus.equals("CONFIRMED"))
+    #foreach($attr in $u.UserAttributes)
+        #if($attrMap.containsKey($attr.Name))
+            #set($user[$attrMap[$attr.Name]] = $attr.Value)
         #end
-        #set($nop = $users.add($tmp))
     #end
 #end
-#set($u = $users[0])
-{#foreach($attr in $u.entrySet())
+
+{#foreach($attr in $user.entrySet())
   "$attr.getKey()": "$attr.getValue()"#if($foreach.hasNext), #end
 #end}
 
     EOF
 }
 
-resource "aws_iam_policy" "getUser_listUsers" {
-  name        = "cognito-getUser_listUsers"
-  description = "Allows listUsers action on ${var.user_pool_id} user_pool"
+resource "aws_iam_policy" "getUser_AdminGetUser" {
+  name        = "cognito-getUser_AdminGetUser"
+  description = "Allows AdminGetUser action on ${var.user_pool_id} user_pool"
 
   policy = <<EOF
 {
@@ -132,7 +128,7 @@ resource "aws_iam_policy" "getUser_listUsers" {
   "Statement": [
     {
       "Action": [
-        "cognito-idp:ListUsers"
+        "cognito-idp:AdminGetUser"
       ],
       "Effect": "Allow",
       "Resource": "${var.user_pool_arn}"
