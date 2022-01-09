@@ -1,4 +1,4 @@
-module "dynamodb_table" {
+module "files_table" {
   source = "terraform-aws-modules/dynamodb-table/aws"
 
   name             = "users_storage_files"
@@ -19,15 +19,43 @@ module "dynamodb_table" {
 }
 
 locals {
-  table_arn        = module.dynamodb_table.dynamodb_table_arn
-  table_name       = module.dynamodb_table.dynamodb_table_id
-  table_stream_arn = module.dynamodb_table.dynamodb_table_stream_arn
+  table_arn        = module.files_table.dynamodb_table_arn
+  table_name       = module.files_table.dynamodb_table_id
+  table_stream_arn = module.files_table.dynamodb_table_stream_arn
 }
 
-output "table" {
+
+module "users_table" {
+  source = "terraform-aws-modules/dynamodb-table/aws"
+
+  name             = "users"
+  hash_key         = "user_id"
+  range_key        = "company"
+  attributes = [
+    {
+      name = "company"
+      type = "S"
+    },
+    {
+      name = "user_id"
+      type = "S"
+    },
+  ]
+}
+
+
+output "files_table" {
   value = tomap({
-    arn        = "${module.dynamodb_table.dynamodb_table_arn}",
-    name       = "${module.dynamodb_table.dynamodb_table_id}",
-    stream_arn = "${module.dynamodb_table.dynamodb_table_stream_arn}",
+    arn        = "${module.files_table.dynamodb_table_arn}",
+    name       = "${module.files_table.dynamodb_table_id}",
+    stream_arn = "${module.files_table.dynamodb_table_stream_arn}",
+  })
+}
+
+output "users_table" {
+  value = tomap({
+    arn        = "${module.users_table.dynamodb_table_arn}",
+    name       = "${module.users_table.dynamodb_table_id}",
+    stream_arn = "${module.users_table.dynamodb_table_stream_arn}",
   })
 }
