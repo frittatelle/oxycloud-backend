@@ -5,3 +5,6 @@ variable "storage_bucket_arn" {
 
 variable "storage_table" {
 }
+
+variable "users_table" {
+}

@@ -66,6 +66,7 @@ module "api" {
   storage_table_stream_arn = module.database.files_table.stream_arn
   user_pool_arn            = module.authorization.user_pool_arn
   user_pool_id             = module.authorization.user_pool
+  users_table              = module.database.users_table
   #4the workaround
   s3_website_endpoint = module.website.domain_name
 }

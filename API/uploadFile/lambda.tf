@@ -35,6 +35,11 @@ resource "aws_iam_policy" "lambda_putitem_s3head" {
         Resource = "${var.storage_table.arn}"
       },
       {
+        Action   = ["dynamodb:UpdateItem"]
+        Effect   = "Allow"
+        Resource = "${var.users_table.arn}"
+      },
+      {
         Action   = ["s3:GetObject"]
         Effect   = "Allow"
         Resource = "${var.storage_bucket_arn}/*"
@@ -65,4 +70,3 @@ resource "aws_lambda_permission" "allow_bucket_on_created" {
   principal     = "s3.amazonaws.com"
   source_arn    = var.storage_bucket_arn
 }
-

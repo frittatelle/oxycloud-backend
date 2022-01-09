@@ -28,6 +28,8 @@ variable "storage_bucket_arn" {}
 
 variable "s3_website_endpoint" {}
 
+variable "users_table" {}
+
 locals {
   user_pool = {
     arn = var.user_pool_arn
