@@ -21,6 +21,33 @@ module "lambda_function" {
       source_arn = var.user_pool_arn
     }
   }
+
+  environment_variables = {
+    "USERS_TABLE" = var.users_table.name
+  }
+}
+
+resource "aws_iam_policy" "lambda_put_item_user_table" {
+  name        = "lambda_put_item_user_table"
+  description = "allows lambda to put item in user table attributes"
+  policy = jsonencode(
+    {
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action   = ["dynamodb:PutItem"]
+          Effect   = "Allow"
+          Resource = "${var.users_table.arn}"
+        },
+
+      ]
+    }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_update_user_attributes" {
+  role       = module.lambda_function.lambda_role_name
+  policy_arn = aws_iam_policy.lambda_put_item_user_table.arn
 }
 
 resource "aws_lambda_permission" "cognito_presignup_trigger" {
