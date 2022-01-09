@@ -34,8 +34,8 @@ module "listDocs" {
     }
   }
 
-  responses = {
-    "ok" = {
+  responses = ({
+    ok = {
       integration_parameters = {
         "method.response.header.Content-Type" = "integration.response.header.Content-Type"
       }
@@ -47,14 +47,49 @@ module "listDocs" {
       integration_content_handling  = "CONVERT_TO_TEXT"
 
       models = {
-        "application/json" = "Empty"
+        "application/json" = "Error"
       }
       parameters = {
         "method.response.header.Content-Type" = true
       }
       status_code = 200
     }
-  }
+    ko_user = {
+      integration_parameters = {
+        "method.response.header.Content-Type" = "integration.response.header.Content-Type"
+      }
+      integration_templates = null
+      integration_selection_pattern = "4\\d{2}"
+      integration_status_code       = 400
+      integration_content_handling  = "CONVERT_TO_TEXT"
+
+      models = {
+        "application/json" = "Error"
+      }
+      parameters = {
+        "method.response.header.Content-Type" = true
+      }
+      status_code = 400
+    }
+
+    ko_server = {
+        integration_parameters = {
+          "method.response.header.Content-Type" = "integration.response.header.Content-Type"
+        }
+        integration_templates = null
+        integration_selection_pattern = "5\\d{2}"
+        integration_status_code       = 500
+        integration_content_handling  = "CONVERT_TO_TEXT"
+
+        models = {
+          "application/json" = "Error"
+        }
+        parameters = {
+          "method.response.header.Content-Type" = true
+        }
+        status_code = 500
+      }
+    })
 }
 
 locals {
