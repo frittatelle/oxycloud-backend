@@ -15,7 +15,7 @@ module "lambda_function" {
   source_path = "${path.module}/lambda_src"
 
   store_on_s3 = false
-  environment_variables ={
+  environment_variables = {
     "USERS_TABLE" = var.users_table.name
   }
 
@@ -33,7 +33,7 @@ resource "aws_iam_policy" "lambda_update_user_attributes" {
           Resource = "${var.user_pool_arn}"
         },
         {
-          Action   = ["dynamodb:PutItem"]
+          Action   = ["dynamodb:UpdateItem"]
           Effect   = "Allow"
           Resource = "${var.users_table.arn}"
         },
