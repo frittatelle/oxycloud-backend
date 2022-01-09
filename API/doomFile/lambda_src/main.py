@@ -18,7 +18,7 @@ def lambda_handler(event, context):
             "headers":{
                 "Content-Type":"application/json"
             },
-            "body":json.dumps("file can\'t be deleted")
+            "body":json.dumps({"message":"file can\'t be deleted"})
         }
 
     return {

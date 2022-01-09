@@ -46,7 +46,7 @@ def lambda_handler(event, context):
                 "headers":{
                     "Content-Type":"application/json"
                 },
-                "body":json.dumps("file can\'t be be shared")
+                "body":json.dumps({"message":"file can\'t be be shared"})
             }
         return {
             "isBase64Encoded": "true",
@@ -61,6 +61,6 @@ def lambda_handler(event, context):
             "headers":{
                 "Content-Type":"application/json"
             },
-            "body":json.dumps("file can\'t be shared with provided user")
+            "body":json.dumps({"message":"file can\'t be shared with provided user"})
         }
     
