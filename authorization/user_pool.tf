@@ -142,7 +142,6 @@ resource "aws_cognito_user_pool_client" "web_client" {
   write_attributes = [
     "address",
     "birthdate",
-    "custom:subscription_plan",
     "email",
     "family_name",
     "gender",
@@ -172,4 +171,5 @@ module "set_user_company" {
 module "verify_subscription_plan" {
   source        = "./verifySubscriptionPlan"
   user_pool_arn = aws_cognito_user_pool.users_pool.arn
+  users_table   = var.users_table
 }
