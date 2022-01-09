@@ -37,6 +37,7 @@ module "authorization" {
   region           = var.region
   website          = local.website
   user_pool_domain = local.user_pool_domain
+  users_table      = module.database.users_table
 }
 
 module "storage" {
