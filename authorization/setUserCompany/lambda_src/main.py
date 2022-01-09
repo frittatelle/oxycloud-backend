@@ -20,7 +20,7 @@ def lambda_handler(event, context):
             }
         ],
     )
-    total = int(event['request']['userAttributes']['cognito:subscription_plan']) * 1e9#GB
+    total = int(int(event['request']['userAttributes']['custom:subscription_plan']) * 1e9)#GB
     users_table.put_item(
             Item={
                 'user_id': event['userName'],
