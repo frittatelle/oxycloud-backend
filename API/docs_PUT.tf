@@ -9,6 +9,7 @@ module "uploadFile" {
     environment_variables = {
       USER_STORAGE_TABLE  = var.storage_table.name
       USER_STORAGE_BUCKET = var.storage_bucketName
+      USERS_TABLE         = var.users_table.name
     }
   }
   http_method = "PUT"
@@ -49,6 +50,11 @@ resource "aws_iam_policy" "uploadFile" {
         Action   = ["dynamodb:PutItem"]
         Effect   = "Allow"
         Resource = "${var.storage_table.arn}"
+      },
+      {
+        Action   = ["dynamodb:GetItem"]
+        Effect   = "Allow"
+        Resource = "${var.users_table.arn}"
       },
       {
         Action   = ["s3:PutObject"]

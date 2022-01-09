@@ -17,6 +17,7 @@ module "lambda_trigger" {
   store_on_s3 = false
   environment_variables = {
     USER_STORAGE_TABLE  = var.storage_table.name
+    USERS_TABLE  = var.users_table.name
     USER_STORAGE_BUCKET = var.storage_bucket_id
   }
 }
@@ -33,6 +34,11 @@ resource "aws_iam_policy" "lambda_putitem_s3head" {
         Action   = ["dynamodb:PutItem"]
         Effect   = "Allow"
         Resource = "${var.storage_table.arn}"
+      },
+      {
+        Action   = ["dynamodb:UpdateItem"]
+        Effect   = "Allow"
+        Resource = "${var.users_table.arn}"
       },
       {
         Action   = ["s3:GetObject"]
@@ -65,4 +71,3 @@ resource "aws_lambda_permission" "allow_bucket_on_created" {
   principal     = "s3.amazonaws.com"
   source_arn    = var.storage_bucket_arn
 }
-

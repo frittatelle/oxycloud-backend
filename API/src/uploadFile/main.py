@@ -9,6 +9,11 @@ from base64 import b64encode
 lifetime = os.environ.get("PRESIGNED_URL_LIFETIME",300)
 bucket = os.environ['USER_STORAGE_BUCKET']
 TABLE = os.environ['USER_STORAGE_TABLE']
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(os.environ['USER_STORAGE_TABLE'])
+users_table = dynamodb.Table(os.environ['USERS_TABLE'])
+
 def encode(data):
     encodedBytes = b64encode(data.encode("utf-8"))
     return str(encodedBytes, "utf-8")
@@ -21,14 +26,13 @@ def lambda_handler(event, context):
     is_folder   = bool(event["queryStringParameters"].get('is_folder',False))
     folder      = event["queryStringParameters"].get('folder','')
     if is_folder:
-        dyndb = boto3.resource("dynamodb")
-        table = dyndb.Table(TABLE)
+        table = dynamodb.Table(TABLE)
         time = str(datetime.utcnow()).replace(" ","T") + "Z"
         response = table.put_item(
                 Item={
                     'file_id': str(uuid.uuid4()),
                     'user_id': user_id,
-                    'display_name': file_name, 
+                    'display_name': file_name,
                     'size': 0,
                     'eTag': "",
                     'time': time,
@@ -41,17 +45,29 @@ def lambda_handler(event, context):
 
         return {'statusCode':200}
     else:
+        #check if enough space
+        item = users_table.get_item(
+            Key={'user_id':user_id},
+        )['Item']
+        used, tot = int(item['used_space']), int(item['total_space'])
+        if used >= tot:
+            return {
+                'statusCode':403,
+                'body':json.dumps({
+                    'message':'Not enough free space'
+                })
+            }
+        # s3 signed url
         s3 = boto3.client('s3', config=Config(signature_version = 's3v4'))
         key = str(uuid.uuid4())
         file_name = encode(file_name)
-        # s3 signed url
-        res = s3.generate_presigned_post(bucket, 
-            key, 
+        res = s3.generate_presigned_post(bucket,
+            key,
             Fields={
-                "x-amz-meta-displayname": file_name, 
-                "x-amz-meta-folder": folder, 
+                "x-amz-meta-displayname": file_name,
+                "x-amz-meta-folder": folder,
                 "x-amz-meta-user":user_id,
-            }, 
+            },
             Conditions=[
                 ['eq','$x-amz-meta-user',user_id],
                 ['eq','$x-amz-meta-displayname',file_name],
@@ -60,10 +76,8 @@ def lambda_handler(event, context):
             ],
             ExpiresIn=lifetime
         )
-        
+
         return {
             'statusCode':200,
             'body': json.dumps(res),
         }
-
-

@@ -17,6 +17,7 @@ module "lambda_function" {
   store_on_s3 = false
   environment_variables = {
     USER_STORAGE_TABLE  = var.storage_table.name
+    USERS_TABLE  = var.users_table.name
     USER_STORAGE_BUCKET = var.storage_bucket_id
   }
 
@@ -49,6 +50,11 @@ resource "aws_iam_policy" "lambda_delete_object" {
           ]
           Effect   = "Allow"
           Resource = "${var.storage_table_stream_arn}"
+        },
+        {
+          Action = [ "dynamodb:UpdateItem" ]
+          Effect = "Allow"
+          Resource = "${var.users_table.arn}"
         },
         {
           Action   = ["s3:DeleteObject"]
