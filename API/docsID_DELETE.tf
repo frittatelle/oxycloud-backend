@@ -37,14 +37,14 @@ module "deleteDoc" {
   responses = {
     ok = {
       integration_parameters = {
-        "method.response.header.Content-Type" = "integration.response.header.Content-Type"
+        "method.response.header.Content-Type" = "'application/json'"
       }
       integration_templates         = {
         "application/json" = "{}"
       }
       integration_selection_pattern = "2\\d{2}"
       integration_status_code       = 200
-      integration_content_handling  = null
+      integration_content_handling  = "CONVERT_TO_TEXT"
 
       models = {
         "application/json" = "Empty"
